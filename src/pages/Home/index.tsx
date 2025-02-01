@@ -1,8 +1,11 @@
 import { useNavigate } from '@umijs/max';
 import { message } from 'antd';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  // 添加控制AI助手显示状态的state
+  const [showAIChat, setShowAIChat] = useState(false);
 
   const tagList = useMemo(() => {
     return [
@@ -175,6 +178,112 @@ const HomePage: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+      {/* AI助手悬浮球 */}
+      <div className="fixed bottom-8 right-8 z-50">
+        {showAIChat && (
+          <div className="absolute bottom-16 right-0 w-96 bg-white rounded-2xl shadow-2xl overflow-hidden">
+            {/* 头部 */}
+            <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white">AI 助手</h3>
+                </div>
+                <div
+                  onClick={() => setShowAIChat(false)}
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* 聊天内容区 */}
+            <div className="h-[400px] overflow-y-auto p-6 space-y-4">
+              <div className="flex flex-col space-y-2">
+                <div className="bg-gray-50 rounded-2xl rounded-tl-sm p-4 max-w-[80%] self-start">
+                  <p className="text-gray-700">
+                    你好！我是你的AI助手，有什么可以帮你的吗？
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 输入框 */}
+            <div className="p-4 border-t">
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  placeholder="输入你的问题..."
+                  className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
+                />
+                <div className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-md hover:shadow-lg">
+                  <span>发送</span>
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 12h14M12 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 悬浮球按钮 */}
+        <div
+          onClick={() => setShowAIChat(!showAIChat)}
+          className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center text-white"
+        >
+          <svg
+            className="w-7 h-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+            />
+          </svg>
         </div>
       </div>
     </div>
