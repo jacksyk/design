@@ -6,6 +6,8 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   // 添加控制AI助手显示状态的state
   const [showAIChat, setShowAIChat] = useState(false);
+  // 添加移动端菜单状态控制
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const tagList = useMemo(() => {
     return [
@@ -39,13 +41,76 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       {/* 顶部导航栏 */}
-      <div className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-wider hover:scale-105 transition-transform">
+      <div className="bg-white shadow-md relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <h1 className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-wider hover:scale-105 transition-transform">
             校园信息交流平台
           </h1>
-          <div className="flex items-center space-x-8">
-            {/* 发布按钮 */}
+          {/* 移动端菜单按钮 */}
+          <div className="flex items-center gap-4 sm:hidden">
+            <div
+              onClick={() => navigate('/publish')}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-2 rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+            </div>
+            {/* 通知图标 - 移动端 */}
+            <div className="relative">
+              <div
+                className="relative cursor-pointer"
+                onClick={() => navigate('/notify')}
+              >
+                <svg
+                  className="w-6 h-6 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              </div>
+            </div>
+            {/* 菜单按钮 */}
+            <div
+              className="relative cursor-pointer"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+            >
+              <svg
+                className="w-6 h-6 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {/* 桌面端导航保持不变 */}
+          <div className="hidden sm:flex items-center space-x-8">
+            {/* 原有的发布按钮等内容 */}
             <div
               onClick={() => navigate('/publish')}
               className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center"
@@ -129,45 +194,45 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* 主要内容区 */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         {/* 信息分类 */}
-        <div className="grid grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 mb-4 sm:mb-8">
           {tagList.map((item) => (
             <div
               key={item.title}
-              className="bg-white p-5 rounded-xl shadow-md flexCenter cursor-pointer hover:shadow-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300"
+              className="bg-white p-3 sm:p-5 rounded-xl shadow-md flexCenter cursor-pointer hover:shadow-xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300"
               onClick={item.onClick}
             >
-              <span className="text-indigo-700 font-medium">{item.title}</span>
+              <span className="text-sm sm:text-base text-indigo-700 font-medium">
+                {item.title}
+              </span>
             </div>
           ))}
         </div>
 
         {/* 信息列表 */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {[1, 2, 3].map((item) => (
             <div
               key={item}
-              className="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400"
-              onClick={() => {
-                navigate('/detail');
-              }}
+              className="bg-white p-4 sm:p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400"
+              onClick={() => navigate('/detail')}
             >
-              <h2 className="text-xl font-semibold text-indigo-800 mb-3 hover:text-blue-600 cursor-pointer">
+              <h2 className="text-lg sm:text-xl font-semibold text-indigo-800 mb-2 sm:mb-3 hover:text-blue-600 cursor-pointer">
                 信息标题
               </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 leading-relaxed">
                 这里是信息内容的简要描述，可以包含一些具体的细节...
               </p>
-              <div className="flex items-center justify-between text-sm text-gray-500">
-                <div className="flex items-center space-x-6">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500">
+                <div className="flex items-center space-x-3 sm:space-x-6">
                   <span className="flex items-center">
-                    <span className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 mr-2"></span>
+                    <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-r from-purple-200 to-pink-200 mr-2"></span>
                     张三
                   </span>
                   <span className="text-indigo-400">2024-01-20</span>
                 </div>
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-3 sm:space-x-6">
                   <span className="hover:text-indigo-500 cursor-pointer">
                     浏览: 123
                   </span>
@@ -180,10 +245,11 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </div>
-      {/* AI助手悬浮球 */}
-      <div className="fixed bottom-8 right-8 z-50">
+
+      {/* AI助手悬浮球 - 移动端适配 */}
+      <div className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50">
         {showAIChat && (
-          <div className="absolute bottom-16 right-0 w-96 bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="absolute bottom-16 right-0 w-[calc(100vw-32px)] sm:w-96 max-w-[96vw] sm:max-w-none bg-white rounded-2xl shadow-2xl overflow-hidden">
             {/* 头部 */}
             <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600">
               <div className="flex items-center justify-between">
