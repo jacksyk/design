@@ -432,7 +432,7 @@ const HomePage: React.FC = () => {
                   return (
                     <UserMessage
                       content={item.content}
-                      key={`user-${index}-${item.content}`} // 使用索引确保 key 唯一
+                      key={`user-${index}`} // 使用索引确保 key 唯一
                     />
                   );
                 }
@@ -440,7 +440,7 @@ const HomePage: React.FC = () => {
                   return (
                     <AssistantMessage
                       content={item.content}
-                      key={`assistant-${index}-${item.content}`} // 使用索引确保 key 唯一
+                      key={`assistant-${index}`} // 使用索引确保 key 唯一
                     />
                   );
                 }
