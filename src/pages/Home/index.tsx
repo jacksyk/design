@@ -1,6 +1,34 @@
 import { useNavigate } from '@umijs/max';
+import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+type UserMessageType = {
+  content: string;
+};
+
+const UserMessage: React.FC<UserMessageType> = ({
+  content = '这是用户发送的消息。',
+}) => {
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="bg-indigo-100 rounded-2xl rounded-tr-sm p-4 max-w-[80%] self-end">
+        <p className="text-indigo-700">{content}</p>
+      </div>
+    </div>
+  );
+};
+
+const AssistantMessage: React.FC<UserMessageType> = ({
+  content = '你好！我是你的AI助手，有什么可以帮你的吗？',
+}) => {
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="bg-gray-50 rounded-2xl rounded-tl-sm p-4 max-w-[80%] self-start">
+        <p className="text-gray-700">{content}</p>
+      </div>
+    </div>
+  );
+};
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -8,6 +36,109 @@ const HomePage: React.FC = () => {
   const [showAIChat, setShowAIChat] = useState(false);
   // 添加移动端菜单状态控制
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const [inputValue, setInputValue] = useState('');
+
+  const [messageList, setMessageList] = useState<
+    Array<{
+      content: string;
+      role: 'user' | 'assistant';
+    }>
+  >([]);
+
+  const scrollContainer = useRef<HTMLDivElement>(null);
+
+  const bufferMessage = useRef<
+    {
+      content: string;
+      role: 'user' | 'assistant';
+    }[]
+  >([]);
+
+  const scrollToBottom = useMemoizedFn(() => {
+    if (scrollContainer.current) {
+      scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight;
+    }
+  });
+
+  const handleSendSteam = useMemoizedFn(async () => {
+    let count = 0;
+
+    bufferMessage.current.push(...messageList);
+
+    const joinMessage = [
+      {
+        content: inputValue,
+        role: 'user',
+      },
+    ];
+
+    // @ts-ignore
+    // setMessageList((prev) => [...prev, ...joinMessage]);
+    bufferMessage.current?.push(...joinMessage);
+
+    setMessageList([...bufferMessage.current]);
+    scrollToBottom();
+
+    setInputValue('');
+
+    try {
+      const response = await fetch(`http://47.122.119.171:3000/sse`, {
+        method: 'POST', // 使用 post 方法
+        headers: {
+          Accept: 'text/event-stream', // 可写可不写，写上明确表明需要返回数据流
+          'Content-Type': 'application/json', // 默认是 text/plain 必须设置为 application/json,不然后端无法解析出 body 内容
+        },
+        // body 是一个字符串，指定 Content-Type 以表明内容格式，
+        body: JSON.stringify({
+          message: joinMessage,
+        }),
+      });
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+
+        let done: boolean;
+        do {
+          count++;
+          const { done: currentDone, value } = await reader.read();
+          done = currentDone;
+          if (done) {
+            bufferMessage.current = [];
+            return;
+          }
+
+          const text = decoder.decode(value);
+          const splitDataIndex = text.indexOf(':');
+          const splitData = text.slice(splitDataIndex + 1);
+
+          try {
+            const data = JSON.parse(splitData);
+            console.log('data.data', data.data);
+            if (count === 1) {
+              bufferMessage.current.push(data.data);
+            } else {
+              bufferMessage.current.pop();
+              bufferMessage.current.push(data.data);
+            }
+            setMessageList([...bufferMessage.current]);
+            scrollToBottom();
+          } catch {
+            console.log('解析错误');
+          }
+          // 自行解析
+        } while (!done);
+      }
+
+      return;
+    } catch {
+      console.error('sse发送错误');
+    }
+  });
+
+  useEffect(() => {
+    console.log('messageList', messageList);
+  }, [messageList]);
 
   const tagList = useMemo(() => {
     return [
@@ -292,26 +423,47 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* 聊天内容区 */}
-            <div className="h-[400px] overflow-y-auto p-6 space-y-4">
-              <div className="flex flex-col space-y-2">
-                <div className="bg-gray-50 rounded-2xl rounded-tl-sm p-4 max-w-[80%] self-start">
-                  <p className="text-gray-700">
-                    你好！我是你的AI助手，有什么可以帮你的吗？
-                  </p>
-                </div>
-              </div>
+            <div
+              className="h-[400px] overflow-y-auto p-6 space-y-4 custom-scrollbar"
+              ref={scrollContainer}
+            >
+              {messageList.map((item, index) => {
+                if (item.role === 'user') {
+                  return (
+                    <UserMessage
+                      content={item.content}
+                      key={`user-${index}-${item.content}`} // 使用索引确保 key 唯一
+                    />
+                  );
+                }
+                if (item.role === 'assistant') {
+                  return (
+                    <AssistantMessage
+                      content={item.content}
+                      key={`assistant-${index}-${item.content}`} // 使用索引确保 key 唯一
+                    />
+                  );
+                }
+                return null;
+              })}
             </div>
 
             {/* 输入框 */}
             <div className="p-4 border-t">
               <div className="flex gap-3">
                 <input
+                  onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setInputValue(e.target.value);
+                  }}
+                  value={inputValue}
                   type="text"
                   placeholder="输入你的问题..."
                   className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
                 />
-                <div className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-md hover:shadow-lg">
+                <div
+                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2 shadow-md hover:shadow-lg"
+                  onClick={handleSendSteam}
+                >
                   <span>发送</span>
                   <svg
                     className="w-4 h-4"
