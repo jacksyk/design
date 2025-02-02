@@ -64,6 +64,7 @@ const HomePage: React.FC = () => {
   const handleSendSteam = useMemoizedFn(async () => {
     let count = 0;
 
+    bufferMessage.current = [];
     bufferMessage.current.push(...messageList);
 
     const joinMessage = [
@@ -104,7 +105,6 @@ const HomePage: React.FC = () => {
           const { done: currentDone, value } = await reader.read();
           done = currentDone;
           if (done) {
-            bufferMessage.current = [];
             return;
           }
 
