@@ -1,7 +1,8 @@
 import { useNavigate } from '@umijs/max';
 import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 type UserMessageType = {
   content: string;
 };
@@ -12,7 +13,9 @@ const UserMessage: React.FC<UserMessageType> = ({
   return (
     <div className="flex flex-col space-y-2">
       <div className="bg-indigo-100 rounded-2xl rounded-tr-sm p-4 max-w-[80%] self-end">
-        <p className="text-indigo-700">{content}</p>
+        <p className="text-indigo-700">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </p>
       </div>
     </div>
   );
@@ -24,7 +27,9 @@ const AssistantMessage: React.FC<UserMessageType> = ({
   return (
     <div className="flex flex-col space-y-2">
       <div className="bg-gray-50 rounded-2xl rounded-tl-sm p-4 max-w-[80%] self-start">
-        <p className="text-gray-700">{content}</p>
+        <p className="text-gray-700">
+          <ReactMarkdown>{content}</ReactMarkdown>
+        </p>
       </div>
     </div>
   );
@@ -105,16 +110,35 @@ const HomePage: React.FC = () => {
           const { done: currentDone, value } = await reader.read();
           done = currentDone;
           if (done) {
+            const text = decoder.decode(value);
+            const splitDataIndex = text.indexOf(':');
+            const splitData = text.slice(splitDataIndex + 1);
+            console.log('text', text);
+
+            try {
+              const data = JSON.parse(splitData);
+              if (count === 1) {
+                bufferMessage.current.push(data.data);
+              } else {
+                bufferMessage.current.pop();
+                bufferMessage.current.push(data.data);
+              }
+              setMessageList([...bufferMessage.current]);
+              scrollToBottom();
+            } catch {
+              console.log('解析错误');
+            }
+
             return;
           }
 
           const text = decoder.decode(value);
           const splitDataIndex = text.indexOf(':');
           const splitData = text.slice(splitDataIndex + 1);
+          console.log('text', text);
 
           try {
             const data = JSON.parse(splitData);
-            console.log('data.data', data.data);
             if (count === 1) {
               bufferMessage.current.push(data.data);
             } else {
@@ -135,10 +159,6 @@ const HomePage: React.FC = () => {
       console.error('sse发送错误');
     }
   });
-
-  useEffect(() => {
-    console.log('messageList', messageList);
-  }, [messageList]);
 
   const tagList = useMemo(() => {
     return [
