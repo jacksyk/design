@@ -1,7 +1,7 @@
 import { useNavigate } from '@umijs/max';
 import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 type UserMessageType = {
   content: string;
@@ -38,7 +38,7 @@ const AssistantMessage: React.FC<UserMessageType> = ({
 const handleStreamMeeage = (data: string) => {
   // 将数据流按行分割
   const lines = data.split('messageType:line').filter((item) => item !== '');
-  return lines.pop();
+  return lines.pop() ?? '';
 };
 
 const HomePage: React.FC = () => {
@@ -72,7 +72,12 @@ const HomePage: React.FC = () => {
     }
   });
 
+  useEffect(() => {
+    console.log('messageList', messageList);
+  }, [messageList]);
+
   const handleSendSteam = useMemoizedFn(async () => {
+    scrollToBottom();
     let count = 0;
 
     bufferMessage.current = [];
@@ -96,7 +101,7 @@ const HomePage: React.FC = () => {
 
     try {
       // http://47.122.119.171:3000/sse
-      const response = await fetch(`http://localhost:3000/sse`, {
+      const response = await fetch(`http://47.122.119.171:3000/sse`, {
         method: 'POST', // 使用 post 方法
         headers: {
           Accept: 'text/event-stream', // 可写可不写，写上明确表明需要返回数据流
@@ -104,12 +109,35 @@ const HomePage: React.FC = () => {
         },
         // body 是一个字符串，指定 Content-Type 以表明内容格式，
         body: JSON.stringify({
-          message: joinMessage,
+          message: bufferMessage.current,
         }),
       });
+
+      const handleValue = (value: any) => {
+        const decoder = new TextDecoder('utf-8');
+        let text = decoder.decode(value);
+        text = handleStreamMeeage(text);
+        const splitDataIndex = text.indexOf(':');
+        const splitData = text.slice(splitDataIndex + 1);
+
+        try {
+          const data = JSON.parse(splitData);
+          if (count === 1) {
+            bufferMessage.current.push(data.data);
+          } else {
+            bufferMessage.current.pop();
+            bufferMessage.current.push(data.data);
+          }
+          setMessageList([...bufferMessage.current]);
+          scrollToBottom();
+        } catch {
+          console.log('解析错误');
+        }
+        return;
+      };
+
       if (response.body) {
         const reader = response.body.getReader();
-        const decoder = new TextDecoder('utf-8');
 
         let done: boolean;
         do {
@@ -117,49 +145,10 @@ const HomePage: React.FC = () => {
           const { done: currentDone, value } = await reader.read();
           done = currentDone;
           if (done) {
-            let text = decoder.decode(value);
-
-            text = handleStreamMeeage(text);
-
-            const splitDataIndex = text.indexOf(':');
-            const splitData = text.slice(splitDataIndex + 1);
-            console.log('text', text, handleStreamMeeage(text));
-
-            try {
-              const data = JSON.parse(splitData);
-              if (count === 1) {
-                bufferMessage.current.push(data.data);
-              } else {
-                bufferMessage.current.pop();
-                bufferMessage.current.push(data.data);
-              }
-              setMessageList([...bufferMessage.current]);
-              scrollToBottom();
-            } catch {
-              console.log('解析错误');
-            }
+            handleValue(value);
             return;
           }
-
-          let text = decoder.decode(value);
-          text = handleStreamMeeage(text);
-          const splitDataIndex = text.indexOf(':');
-          const splitData = text.slice(splitDataIndex + 1);
-          console.log('text', text, handleStreamMeeage(text));
-
-          try {
-            const data = JSON.parse(splitData);
-            if (count === 1) {
-              bufferMessage.current.push(data.data);
-            } else {
-              bufferMessage.current.pop();
-              bufferMessage.current.push(data.data);
-            }
-            setMessageList([...bufferMessage.current]);
-            scrollToBottom();
-          } catch {
-            console.log('解析错误');
-          }
+          handleValue(value);
           // 自行解析
         } while (!done);
       }
