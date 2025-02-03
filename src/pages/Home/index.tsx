@@ -35,6 +35,12 @@ const AssistantMessage: React.FC<UserMessageType> = ({
   );
 };
 
+const handleStreamMeeage = (data: string) => {
+  // 将数据流按行分割
+  const lines = data.split('messageType:line').filter((item) => item !== '');
+  return lines.pop();
+};
+
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   // 添加控制AI助手显示状态的state
@@ -89,7 +95,8 @@ const HomePage: React.FC = () => {
     setInputValue('');
 
     try {
-      const response = await fetch(`http://47.122.119.171:3000/sse`, {
+      // http://47.122.119.171:3000/sse
+      const response = await fetch(`http://localhost:3000/sse`, {
         method: 'POST', // 使用 post 方法
         headers: {
           Accept: 'text/event-stream', // 可写可不写，写上明确表明需要返回数据流
@@ -110,10 +117,13 @@ const HomePage: React.FC = () => {
           const { done: currentDone, value } = await reader.read();
           done = currentDone;
           if (done) {
-            const text = decoder.decode(value);
+            let text = decoder.decode(value);
+
+            text = handleStreamMeeage(text);
+
             const splitDataIndex = text.indexOf(':');
             const splitData = text.slice(splitDataIndex + 1);
-            console.log('text', text);
+            console.log('text', text, handleStreamMeeage(text));
 
             try {
               const data = JSON.parse(splitData);
@@ -128,14 +138,14 @@ const HomePage: React.FC = () => {
             } catch {
               console.log('解析错误');
             }
-
             return;
           }
 
-          const text = decoder.decode(value);
+          let text = decoder.decode(value);
+          text = handleStreamMeeage(text);
           const splitDataIndex = text.indexOf(':');
           const splitData = text.slice(splitDataIndex + 1);
-          console.log('text', text);
+          console.log('text', text, handleStreamMeeage(text));
 
           try {
             const data = JSON.parse(splitData);
