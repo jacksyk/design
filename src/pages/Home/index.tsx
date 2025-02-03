@@ -3,6 +3,8 @@ import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { twMerge } from 'tailwind-merge';
+
 type UserMessageType = {
   content: string;
 };
@@ -189,7 +191,12 @@ const HomePage: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+    <div
+      className={twMerge(
+        'min-h-screen bg-gradient-to-br from-blue-50 to-purple-50',
+        showAIChat && ' fixed top-0 left-0 right-0 bottom-0 ',
+      )}
+    >
       {/* 顶部导航栏 */}
       <div className="bg-white shadow-md relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
