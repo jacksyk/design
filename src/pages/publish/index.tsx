@@ -1,7 +1,12 @@
+import { Back } from '@/components';
 const PublishPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-4 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        {/* 返回按钮 */}
+
+        <Back></Back>
+
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-8">
           <h1 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-6 sm:mb-8">
             发布信息

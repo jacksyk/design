@@ -19,6 +19,6 @@
   background: #4f46e5;
 }
 
-.animate__fadeInFast__duration-300 {
-  animation-duration: 0.3s; /* 将动画速度调整为 0.5 秒 */
+.animate__fadeInFast__duration-150 {
+  animation-duration: 0.15s; /* 将动画速度调整为 0.5 秒 */
 }
