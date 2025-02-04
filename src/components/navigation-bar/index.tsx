@@ -2,6 +2,8 @@ import { useNavigate } from '@umijs/max';
 
 export const NavigationBar = () => {
   const navigate = useNavigate();
+  const isPassAccess = localStorage.getItem('token');
+
   return (
     <>
       {/* 顶部导航栏 */}
@@ -99,21 +101,37 @@ export const NavigationBar = () => {
                     navigate('/personal');
                   }}
                 >
-                  个人中心
+                  {isPassAccess ? '个人中心' : '登录'}
                 </span>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                {isPassAccess ? (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                )}
               </div>
             </div>
           </div>

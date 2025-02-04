@@ -1,4 +1,5 @@
-import { login } from '@/api/login';
+import { login } from '@/api';
+import { useNavigate } from '@umijs/max';
 import { message } from 'antd';
 import { useCallback, useState } from 'react';
 const Login = () => {
@@ -8,6 +9,7 @@ const Login = () => {
     password: '',
     confirmPassword: '',
   });
+  const navigate = useNavigate();
 
   const handleLogin = useCallback(() => {
     login({
@@ -15,9 +17,10 @@ const Login = () => {
       password: 'shuyikang123',
     }).then((res) => {
       localStorage.setItem('token', res.token);
+      navigate('/home');
       message.success(res.message);
     });
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-purple-200 via-blue-200 to-blue-300 px-4 sm:px-0">
@@ -70,7 +73,7 @@ const Login = () => {
 
         <div className="mt-8 space-y-4">
           <div
-            className="w-full p-2.5 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm sm:text-base cursor-pointer hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="w-full p-2.5 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm sm:text-base cursor-pointer hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flexCenter"
             onClick={handleLogin}
           >
             {isLogin ? '登录' : '注册'}

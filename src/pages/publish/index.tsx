@@ -1,5 +1,53 @@
+import { createActivity } from '@/api';
 import { Back } from '@/components';
+import { useNavigate } from '@umijs/max';
+import { useMemoizedFn } from 'ahooks';
+import { DatePicker, message } from 'antd';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+
+const { RangePicker } = DatePicker;
+
 const PublishPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  /** 表单值 */
+  const [formValue, setFormValue] = useState<{
+    startTime: number;
+    endTime: number;
+    title: string;
+    content: string;
+  }>({
+    startTime: 0,
+    endTime: 0,
+    title: '',
+    content: '',
+  });
+
+  /** 日期选择器 */
+  const onTimeRangeChange = useMemoizedFn((_: any, dateString: any) => {
+    const startTime = dayjs(dateString[0]).valueOf();
+    const endTime = dayjs(dateString[1]).valueOf();
+    setFormValue({
+      ...formValue,
+      startTime,
+      endTime,
+    });
+  });
+
+  /** 创建活动 */
+  const sendCreateActivity = useMemoizedFn(() => {
+    createActivity({
+      title: formValue.title,
+      description: formValue.content,
+      start_time: formValue.startTime,
+      end_time: formValue.endTime,
+    }).then(() => {
+      message.success('发布成功');
+      navigate('/home');
+    });
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-4 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -9,21 +57,15 @@ const PublishPage: React.FC = () => {
 
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-8">
           <h1 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-6 sm:mb-8">
-            发布信息
+            发布活动
           </h1>
 
-          {/* 信息分类选择 */}
+          {/* 选择日期 */}
           <div className="mb-4 sm:mb-6">
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
-              信息类型
+              日期
             </label>
-            <select className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option value="">请选择类型</option>
-              <option value="academic">学术交流</option>
-              <option value="activity">校园活动</option>
-              <option value="trade">二手交易</option>
-              <option value="lost">失物招领</option>
-            </select>
+            <RangePicker showTime onChange={onTimeRangeChange}></RangePicker>
           </div>
 
           {/* 标题输入 */}
@@ -35,6 +77,12 @@ const PublishPage: React.FC = () => {
               type="text"
               placeholder="请输入标题"
               className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFormValue({
+                  ...formValue,
+                  title: e.target.value,
+                });
+              }}
             />
           </div>
 
@@ -47,11 +95,17 @@ const PublishPage: React.FC = () => {
               rows={6}
               placeholder="请输入内容"
               className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onInput={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                setFormValue({
+                  ...formValue,
+                  content: e.target.value,
+                });
+              }}
             />
           </div>
 
           {/* 图片上传 */}
-          <div className="mb-6 sm:mb-8">
+          {/* <div className="mb-6 sm:mb-8">
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
               添加图片
             </label>
@@ -63,11 +117,14 @@ const PublishPage: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* 提交按钮 */}
           <div className="flex justify-end">
-            <div className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300">
+            <div
+              className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300"
+              onClick={sendCreateActivity}
+            >
               发布
             </div>
           </div>

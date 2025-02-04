@@ -1,29 +1,44 @@
+import { getAllActivityResponse } from '@/api';
+import { joinUrlParams } from '@/utils';
 import { useNavigate } from '@umijs/max';
+import { useCallback } from 'react';
+type ActivityCardType = Partial<getAllActivityResponse['data'][0]>;
 
-export const ActivityCard = () => {
+export const ActivityCard: React.FC<ActivityCardType> = (props) => {
+  const { avatar, createTime, description, id, likes, title, username, views } =
+    props;
+
   const navigate = useNavigate();
+
+  const handleClickToDetail = useCallback(() => {
+    navigate(
+      joinUrlParams('/detail', {
+        id,
+      }),
+    );
+  }, [id, navigate]);
 
   return (
     <div
       className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400 group cursor-pointer"
-      onClick={() => navigate('/detail')}
+      onClick={handleClickToDetail}
     >
       <h2 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-3 sm:mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-colors">
-        信息标题
+        {title}
       </h2>
-      <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
-        这里是信息内容的简要描述，可以包含一些具体的细节...
+      <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed truncate whitespace-nowrap overflow-hidden">
+        {description}
       </p>
       <div className="flex flex-wrap items-center justify-between gap-4 text-sm sm:text-base text-gray-500">
         <div className="flex items-center space-x-4 sm:space-x-6">
           <span className="flex items-center">
             <span className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 mr-2 shadow-md"></span>
-            <span className="font-medium text-gray-700">张三</span>
+            <span className="font-medium text-gray-700">{username}</span>
           </span>
-          <span className="text-indigo-500">2024-01-20</span>
+          <span className="text-indigo-500">{createTime}</span>
         </div>
         <div className="flex items-center space-x-6">
-          <span className="flex items-center space-x-2 hover:text-indigo-600 transition-colors">
+          <span className="flex items-center space-x-2 ">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -43,9 +58,9 @@ export const ActivityCard = () => {
                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
               />
             </svg>
-            <span>123</span>
+            <span>{views}</span>
           </span>
-          <span className="flex items-center space-x-2 hover:text-indigo-600 transition-colors">
+          <span className="flex items-center space-x-2 ">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -56,10 +71,10 @@ export const ActivityCard = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
             </svg>
-            <span>45</span>
+            <span>{likes}</span>
           </span>
         </div>
       </div>

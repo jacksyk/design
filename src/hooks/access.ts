@@ -6,7 +6,7 @@ export const useAccess = () => {
   const { pathname } = location;
 
   const doNotAccess = useMemo(() => {
-    return ['/login'];
+    return ['/login', '/home', '/'];
   }, []);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export const useAccess = () => {
 
     const token = localStorage.getItem('token');
 
-    if (!token) {
+    if (!token && pathname !== '/home') {
       navigate('/login');
     }
   }, [doNotAccess, navigate, pathname]);

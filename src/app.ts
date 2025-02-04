@@ -7,6 +7,7 @@ import './global.css';
 import type { RequestConfig } from 'umi';
 
 import { RequestOptions } from '@umijs/max';
+import { message } from 'antd';
 import VConsole from 'vconsole';
 
 new VConsole();
@@ -16,10 +17,14 @@ export async function getInitialState(): Promise<{ name: string }> {
 }
 
 export const request: RequestConfig = {
-  timeout: 1000,
-  // other axios options you want
   errorConfig: {
-    errorHandler() {},
+    errorHandler(res: any) {
+      if (res.response.status === 401) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      message.error(res.response.statusText);
+    },
     errorThrower() {},
   },
   requestInterceptors: [
@@ -35,9 +40,13 @@ export const request: RequestConfig = {
           token,
         };
       }
-      console.log('config', config);
       return config;
     },
   ],
-  responseInterceptors: [],
+  responseInterceptors: [
+    (response: any) => {
+      console.log('response', response);
+      return response;
+    },
+  ],
 };
