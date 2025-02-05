@@ -3,6 +3,7 @@ import {
   getPersonFeedback,
   taggingReadNotify,
 } from '@/api';
+import { Back } from '@/components';
 import { useMemoizedFn, useMount } from 'ahooks';
 import { message } from 'antd';
 import { groupBy } from 'lodash-es';
@@ -136,6 +137,8 @@ const NotifyPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-4 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <Back></Back>
+
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-8">
           <h1 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-6 sm:mb-8">
             反馈通知

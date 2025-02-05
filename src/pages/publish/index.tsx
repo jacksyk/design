@@ -65,7 +65,14 @@ const PublishPage: React.FC = () => {
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
               日期
             </label>
-            <RangePicker showTime onChange={onTimeRangeChange}></RangePicker>
+            <RangePicker 
+              showTime 
+              onChange={onTimeRangeChange}
+              className="w-full sm:w-auto"
+              placeholder={['开始时间', '结束时间']}
+              style={{ fontSize: window.innerWidth < 640 ? 14 : 16 }}
+              popupClassName="!text-sm sm:!text-base"
+            />
           </div>
 
           {/* 标题输入 */}
@@ -122,7 +129,7 @@ const PublishPage: React.FC = () => {
           {/* 提交按钮 */}
           <div className="flex justify-end">
             <div
-              className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300"
+              className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300 flexCenter"
               onClick={sendCreateActivity}
             >
               发布

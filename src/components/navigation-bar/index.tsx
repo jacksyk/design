@@ -1,13 +1,18 @@
 import { getNotifyFeedback, getNotifyFeedbackResponse } from '@/api';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useNavigate } from '@umijs/max';
-import { useEffect, useState } from 'react';
-
+import { useBoolean } from 'ahooks';
+import { Drawer } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 export const NavigationBar = () => {
   const navigate = useNavigate();
   const isPassAccess = localStorage.getItem('token');
   const [notifyList, setNotifyList] = useState<
     getNotifyFeedbackResponse['data']
   >([]);
+
+  const [open, { setTrue: setOpenTrue, setFalse: setOpenFalse }] =
+    useBoolean(false);
 
   useEffect(() => {
     if (isPassAccess) {
@@ -17,13 +22,45 @@ export const NavigationBar = () => {
     }
   }, [isPassAccess]);
 
+  const entryList = useMemo(() => {
+    const list = [
+      {
+        text: '登录',
+        route: '/login',
+      },
+      {
+        text: '个人中心',
+        route: '/personal',
+      },
+      {
+        text: '通知',
+        route: '/notify',
+      },
+      {
+        text: '发布活动',
+        route: '/publish',
+      },
+    ];
+    if (isPassAccess) {
+      delete list[0];
+      return list;
+    } else {
+      return list.shift();
+    }
+  }, [isPassAccess]);
+
   return (
     <>
       {/* 顶部导航栏 */}
       <div className="bg-white/80 backdrop-blur-sm shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-wider hover:scale-105 transition-transform cursor-pointer">
+          <div className="flex items-center justify-between ">
+            <MenuUnfoldOutlined
+              className="text-indigo-600 text-[30px] sm:hidden cursor-pointer"
+              onClick={setOpenTrue}
+            />
+
+            <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 tracking-wider hover:scale-105 transition-transform cursor-pointer hidden sm:block">
               校园信息交流平台
             </h1>
 
@@ -163,6 +200,63 @@ export const NavigationBar = () => {
                 )}
               </div>
             </div>
+
+            {/* 抽屉 */}
+            <Drawer
+              title={
+                <div className="justify-between items-center flex">
+                  <span className="text-lg font-medium text-indigo-600">
+                    入口中心
+                  </span>
+
+                  <MenuFoldOutlined
+                    className="text-indigo-600 text-[25px] sm:hidden cursor-pointer"
+                    onClick={setOpenFalse}
+                  />
+                </div>
+              }
+              closable={false}
+              onClose={setOpenFalse}
+              open={open}
+              placement="left"
+              className="rounded-r-xl"
+              width={window.innerWidth > 640 ? 320 : '75%'}
+              styles={{
+                body: {
+                  padding: '12px',
+                },
+              }}
+            >
+              <div className="space-y-1.5">
+                {entryList.map((item) => (
+                  <div
+                    key={item.route}
+                    onClick={() => {
+                      navigate(item.route);
+                      setOpenFalse();
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-indigo-50 cursor-pointer transition-colors group"
+                  >
+                    <span className="text-gray-600 group-hover:text-indigo-600 transition-colors text-base font-medium">
+                      {item.text}
+                    </span>
+                    <svg
+                      className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors ml-auto"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            </Drawer>
           </div>
         </div>
       </div>

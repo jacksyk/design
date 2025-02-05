@@ -14,27 +14,28 @@ const HomePage: React.FC = () => {
   const tagList = useMemo(() => {
     return [
       {
-        title: '学术论坛',
-        onClick: () => {
-          navigate('/conversation');
-        },
-      },
-      {
         title: '网站反馈',
         onClick: () => {
           navigate('/feedback');
         },
       },
       {
+        title: '学术论坛',
+        onClick: () => {
+          message.error('暂未开放，尽情期待');
+          // navigate('/conversation');
+        },
+      },
+      {
         title: '二手交易',
         onClick: () => {
-          message.error('暂未开放');
+          message.error('暂未开放，尽情期待');
         },
       },
       {
         title: '失物招领',
         onClick: () => {
-          message.error('暂未开放');
+          message.error('暂未开放，尽情期待');
         },
       },
     ];

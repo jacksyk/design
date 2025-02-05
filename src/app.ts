@@ -33,6 +33,7 @@ export const request: RequestConfig = {
       const token = localStorage.getItem('token');
 
       config.baseURL = 'http://47.122.119.171:3000';
+      // config.baseURL = 'http://localhost:3000';
       // 如果token存在，将其添加到请求头中
       if (token) {
         config.headers = {
