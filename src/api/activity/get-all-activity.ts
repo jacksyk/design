@@ -49,7 +49,7 @@ export const getAllActivity = (data: Request) =>
             views: item.views,
             collections: item.collections,
             username: item.user.username,
-            avatar: item.avartar,
+            avatar: item.user.avatar,
             userId: item.user.id,
           };
         });

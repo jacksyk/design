@@ -114,7 +114,12 @@ export const NavigationBar = () => {
               )}
               {/* 消息通知图标 */}
               {isPassAccess && (
-                <div className="relative cursor-pointer group">
+                <div
+                  className="relative cursor-pointer group"
+                  onClick={() => {
+                    navigate('/notify');
+                  }}
+                >
                   <svg
                     className="w-6 h-6 text-indigo-600 hover:text-purple-600 transition-colors"
                     fill="none"
@@ -134,39 +139,38 @@ export const NavigationBar = () => {
                     </span>
                   )}
                   {/* 悬浮提示框 */}
-                  <div
-                    className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-10 invisible group-hover:visible transition-all duration-300"
-                    onClick={() => {
-                      navigate('/notify');
-                    }}
-                  >
-                    {notifyList.map((item) => {
-                      return (
-                        <div
-                          className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
-                          key={item.id}
-                        >
-                          <p className="text-sm text-gray-600">{item.reply}</p>
-                          <span className="text-xs text-gray-400">
-                            {item.createTime}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {notifyList.length > 0 && (
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-10 invisible group-hover:visible transition-all duration-300">
+                      {notifyList.map((item) => {
+                        return (
+                          <div
+                            className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                            key={item.id}
+                          >
+                            <p className="text-sm text-gray-600">
+                              {item.reply}
+                            </p>
+                            <span className="text-xs text-gray-400">
+                              {item.createTime}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
               {/* 头像 */}
-              {isPassAccess && (
+              {/* {isPassAccess && (
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 border-2 border-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 cursor-pointer"></div>
-              )}
-              <div className="flex items-center space-x-2 text-indigo-600 hover:text-purple-600 transition-colors cursor-pointer">
-                <span
-                  className="text-lg font-medium"
-                  onClick={() => {
-                    navigate('/personal');
-                  }}
-                >
+              )} */}
+              <div
+                className="flex items-center space-x-2 text-indigo-600 hover:text-purple-600 transition-colors cursor-pointer"
+                onClick={() => {
+                  navigate('/personal');
+                }}
+              >
+                <span className="text-lg font-medium">
                   {isPassAccess ? '个人中心' : '登录'}
                 </span>
                 {isPassAccess ? (

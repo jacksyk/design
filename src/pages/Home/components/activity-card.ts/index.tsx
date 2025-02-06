@@ -1,6 +1,7 @@
 import { getAllActivityResponse } from '@/api';
 import { joinUrlParams } from '@/utils';
 import { useNavigate } from '@umijs/max';
+import dayjs from 'dayjs';
 import { useCallback } from 'react';
 type ActivityCardType = Partial<getAllActivityResponse['data'][0]>;
 
@@ -23,7 +24,7 @@ export const ActivityCard: React.FC<ActivityCardType> = (props) => {
       className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400 group cursor-pointer"
       onClick={handleClickToDetail}
     >
-      <h2 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-3 sm:mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-colors">
+      <h2 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-3 sm:mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-colors overflow-hidden text-nowrap text-ellipsis">
         {title}
       </h2>
       <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed truncate whitespace-nowrap overflow-hidden">
@@ -32,10 +33,15 @@ export const ActivityCard: React.FC<ActivityCardType> = (props) => {
       <div className="flex flex-wrap items-center justify-between gap-4 text-sm sm:text-base text-gray-500">
         <div className="flex items-center space-x-4 sm:space-x-6">
           <span className="flex items-center">
-            <span className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 mr-2 shadow-md"></span>
+            <span className="w-8 h-8 rounded-full bg-gradient-to-r  mr-2 shadow-md">
+              <img src={avatar} alt="" className="rounded-full" />
+            </span>
             <span className="font-medium text-gray-700">{username}</span>
           </span>
-          <span className="text-indigo-500">{createTime}</span>
+          <span className="text-indigo-500 ssm:block hidden">{createTime}</span>
+        </div>
+        <div className="text-indigo-500 ssm:hidden">
+          {dayjs(createTime).format('YYYY-MM-DD')}
         </div>
         <div className="flex items-center space-x-6">
           <span className="flex items-center space-x-2 ">
