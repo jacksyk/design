@@ -4,12 +4,33 @@ import { useNavigate } from '@umijs/max';
 import { useMemoizedFn } from 'ahooks';
 import { DatePicker, message } from 'antd';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { DatetimePicker, Field } from 'react-vant';
 
 const { RangePicker } = DatePicker;
 
 const PublishPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isMobileApp, setIsMobileApp] = useState(window.innerWidth < 700);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileApp(window.innerWidth < 700);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const [time, setTime] = useState<{
+    startTime: Date | string;
+    endTime: Date | string;
+  }>({
+    startTime: new Date(),
+    endTime: new Date(),
+  });
 
   /** 表单值 */
   const [formValue, setFormValue] = useState<{
@@ -65,14 +86,88 @@ const PublishPage: React.FC = () => {
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
               日期
             </label>
-            <RangePicker 
-              showTime 
-              onChange={onTimeRangeChange}
-              className="w-full sm:w-auto"
-              placeholder={['开始时间', '结束时间']}
-              style={{ fontSize: window.innerWidth < 640 ? 14 : 16 }}
-              popupClassName="!text-sm sm:!text-base"
-            />
+            {/* 桌面端日期选择器 */}
+            {!isMobileApp && (
+              <RangePicker
+                showTime
+                onChange={onTimeRangeChange}
+                className="w-full"
+                placeholder={['开始时间', '结束时间']}
+                style={{ fontSize: 16 }}
+                popupClassName="!text-base"
+              />
+            )}
+
+            {/* 移动端日期选择器 */}
+            {isMobileApp && (
+              <div className="space-y-3">
+                <DatetimePicker
+                  popup={{
+                    round: true,
+                  }}
+                  type="datetime"
+                  title="开始时间"
+                  minDate={new Date(2000, 0, 1)}
+                  maxDate={new Date(2050, 10, 1)}
+                  value={new Date(time.startTime)}
+                  onConfirm={(value: any) => {
+                    setTime({
+                      ...time,
+                      startTime: value,
+                    });
+                    setFormValue({
+                      ...formValue,
+                      startTime: new Date(value).getTime(),
+                    });
+                  }}
+                >
+                  {(val: any, _: any, actions: any) => (
+                    <Field
+                      readOnly
+                      clickable
+                      label="开始时间"
+                      value={new Date(val).toLocaleString()}
+                      placeholder="请选择开始时间"
+                      onClick={() => actions.open()}
+                      className="rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    />
+                  )}
+                </DatetimePicker>
+
+                <DatetimePicker
+                  popup={{
+                    round: true,
+                  }}
+                  type="datetime"
+                  title="结束时间"
+                  minDate={new Date(dayjs(time.startTime).valueOf())}
+                  maxDate={new Date(2050, 10, 1)}
+                  value={new Date(time.endTime)}
+                  onConfirm={(value: any) => {
+                    setTime({
+                      ...time,
+                      endTime: value,
+                    });
+                    setFormValue({
+                      ...formValue,
+                      endTime: new Date(value).getTime(),
+                    });
+                  }}
+                >
+                  {(val: any, _: any, actions: any) => (
+                    <Field
+                      readOnly
+                      clickable
+                      label="结束时间"
+                      value={new Date(val).toLocaleString()}
+                      placeholder="请选择结束时间"
+                      onClick={() => actions.open()}
+                      className="rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500"
+                    />
+                  )}
+                </DatetimePicker>
+              </div>
+            )}
           </div>
 
           {/* 标题输入 */}

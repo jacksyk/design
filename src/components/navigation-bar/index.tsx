@@ -45,7 +45,7 @@ export const NavigationBar = () => {
       delete list[0];
       return list;
     } else {
-      return list.shift();
+      return [list.shift()];
     }
   }, [isPassAccess]);
 
@@ -230,15 +230,17 @@ export const NavigationBar = () => {
               <div className="space-y-1.5">
                 {entryList.map((item) => (
                   <div
-                    key={item.route}
+                    key={item?.text}
                     onClick={() => {
-                      navigate(item.route);
-                      setOpenFalse();
+                      if (item) {
+                        navigate(item.route);
+                        setOpenFalse();
+                      }
                     }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-indigo-50 cursor-pointer transition-colors group"
                   >
                     <span className="text-gray-600 group-hover:text-indigo-600 transition-colors text-base font-medium">
-                      {item.text}
+                      {item?.text}
                     </span>
                     <svg
                       className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors ml-auto"
