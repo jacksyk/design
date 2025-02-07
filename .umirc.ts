@@ -12,6 +12,7 @@ export default defineConfig({
   npmClient: 'pnpm',
   plugins: [path.resolve(__dirname, './plugin/auto-generate-plugin.js')],
   tailwindcss: {},
+  devtool: 'source-map',
   clickToComponent: {
     editor: 'Trae',
   },

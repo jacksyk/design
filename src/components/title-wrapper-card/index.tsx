@@ -6,6 +6,7 @@ type TitleWrapperCardType = {
   children: React.ReactNode;
   allEntryText?: string;
   className?: string;
+  allEntryCb?: () => void;
 };
 
 export const TitleWrapperCard: React.FC<TitleWrapperCardType> = (props) => {
@@ -15,6 +16,7 @@ export const TitleWrapperCard: React.FC<TitleWrapperCardType> = (props) => {
     children,
     allEntryText = '查看全部',
     className = '',
+    allEntryCb,
   } = props;
   return (
     <div
@@ -28,7 +30,10 @@ export const TitleWrapperCard: React.FC<TitleWrapperCardType> = (props) => {
           {title}
         </h2>
         {isShowAllEntry && (
-          <span className="text-sm text-gray-500 cursor-pointer">
+          <span
+            className="text-sm text-gray-500 cursor-pointer"
+            onClick={allEntryCb}
+          >
             {allEntryText}
           </span>
         )}

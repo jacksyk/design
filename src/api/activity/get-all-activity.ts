@@ -5,6 +5,9 @@ type Request = {
   limit: number;
   /** 第几页 */
   page: number;
+
+  /** 搜索内容 */
+  searchContent?: string;
 };
 
 export type getAllActivityResponse = {
@@ -35,8 +38,10 @@ export type getAllActivityResponse = {
 
 export const getAllActivity = (data: Request) =>
   new Promise<getAllActivityResponse>((resolve, reject) => {
-    const { limit, page } = data;
-    request(`/activity?page=${page}&limit=${limit}`)
+    const { limit, page, searchContent = '' } = data;
+    request(
+      `/activity?page=${page}&limit=${limit}&searchContent=${searchContent}`,
+    )
       .then((res) => {
         const { data, totalCount } = res.data;
         const returnData = data.map((item: any) => {

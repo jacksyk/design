@@ -50,7 +50,7 @@ export const getOneActivity = (data: Request) =>
           views: item.views,
           collections: item.collections,
           username: item.user.username,
-          avatar: item.avartar,
+          avatar: item.user.avatar,
           userId: item.user.id,
           isLiked: item.isLiked,
           isCollected: item.isCollected,

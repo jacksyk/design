@@ -36,6 +36,7 @@ const DetailPage: React.FC = () => {
     title,
     username,
     views,
+    avatar,
   } = getOneActivityResponse ?? {};
 
   const resetComment = useMemoizedFn(() => {
@@ -162,9 +163,22 @@ const DetailPage: React.FC = () => {
 
           {/* 作者信息 */}
           <div className="flex items-center space-x-3 mb-6 sm:mb-8">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-100 flexCenter text-sm">
-              用户
-            </div>
+            {!avatar && (
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-indigo-100 flexCenter text-sm">
+                用户
+              </div>
+            )}
+
+            {avatar && (
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full  flexCenter text-sm">
+                <img
+                  src={avatar}
+                  alt="avatar"
+                  className="w-full h-full rounded-full"
+                />
+              </div>
+            )}
+
             <div>
               <h3 className="font-medium text-gray-800 text-sm sm:text-base">
                 {username}

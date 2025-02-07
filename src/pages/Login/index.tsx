@@ -1,26 +1,50 @@
-import { login } from '@/api';
+import { createUser, login, sendEmail } from '@/api';
 import { useNavigate } from '@umijs/max';
+import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isSendEmail, setIsSendEmail] = useState(false);
   const [formValue, setFormValue] = useState({
     studentId: '',
     password: '',
-    confirmPassword: '',
+    email: '',
+    code: '',
   });
   const navigate = useNavigate();
 
-  const handleLogin = useCallback(() => {
-    login({
-      student_id: '202126202047',
-      password: 'shuyikang123',
-    }).then((res) => {
-      localStorage.setItem('token', res.token);
-      navigate('/home');
-      message.success(res.message);
-    });
-  }, [navigate]);
+  const handleLogin = useMemoizedFn(() => {
+    if (isLogin) {
+      login({
+        student_id: formValue.studentId,
+        password: formValue.password,
+      }).then((res) => {
+        localStorage.setItem('token', res.token);
+        navigate('/home');
+        message.success(res.message);
+      });
+    } else {
+      if (!isSendEmail) {
+        sendEmail({
+          to: formValue.email,
+        }).then(() => {
+          message.success('验证码发送成功');
+          setIsSendEmail(true);
+        });
+      } else {
+        createUser({
+          student_id: formValue.studentId,
+          password: formValue.password,
+          email: formValue.email,
+          code: formValue.code,
+        }).then(() => {
+          message.success('注册成功');
+          setIsLogin(true);
+        });
+      }
+    }
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-purple-200 via-blue-200 to-blue-300 px-4 sm:px-0">
@@ -56,14 +80,29 @@ const Login = () => {
           {!isLogin && (
             <div>
               <input
-                type="password"
                 className="w-full p-2.5 sm:p-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
-                placeholder="确认密码"
-                value={formValue.confirmPassword}
+                placeholder="邮箱"
+                value={formValue.email}
                 onChange={(e) =>
                   setFormValue({
                     ...formValue,
-                    confirmPassword: e.target.value,
+                    email: e.target.value,
+                  })
+                }
+              />
+            </div>
+          )}
+
+          {!isLogin && (
+            <div>
+              <input
+                className="w-full p-2.5 sm:p-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                placeholder="验证码"
+                value={formValue.code}
+                onChange={(e) =>
+                  setFormValue({
+                    ...formValue,
+                    code: e.target.value,
                   })
                 }
               />
@@ -76,7 +115,7 @@ const Login = () => {
             className="w-full p-2.5 sm:p-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm sm:text-base cursor-pointer hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flexCenter"
             onClick={handleLogin}
           >
-            {isLogin ? '登录' : '注册'}
+            {isLogin ? '登录' : !isSendEmail ? '发送验证码' : '注册'}
           </div>
 
           <div className="text-center">

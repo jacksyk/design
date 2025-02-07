@@ -10,26 +10,57 @@ const ListPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchKey, setSearchKey] = useState('');
   const [filter, setFilter] = useState('all');
+  const [_page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-  const fetchList = async () => {
+  const fetchList = async (currentPage: number, searchContent: string = '') => {
     try {
       setLoading(true);
       const res = await getAllActivity({
-        limit: 20,
-        page: 1,
+        limit: 5,
+        page: currentPage,
+        searchContent,
       });
-      setList(res.data);
+      if (currentPage === 1) {
+        setList(res.data);
+      } else {
+        setList((prev) => [...prev, ...res.data]);
+      }
+      setHasMore(res.data.length === 5);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    setPage(1);
     const timer = setTimeout(() => {
-      fetchList();
+      fetchList(1, searchKey);
     }, 300);
     return () => clearTimeout(timer);
   }, [searchKey, filter]);
+
+  // 添加滚动监听
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loading || !hasMore) return;
+
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollTop = document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+
+      // 判断是否到底
+      if (scrollHeight - scrollTop - clientHeight < 100) {
+        setPage((prev) => {
+          fetchList(prev + 1, searchKey);
+          return prev + 1;
+        });
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore, searchKey]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
@@ -112,36 +143,42 @@ const ListPage: React.FC = () => {
 
         {/* 活动列表 */}
         <div className="relative min-h-[200px]">
-          <Spin spinning={loading}>
-            <div className="space-y-4 sm:space-y-6">
-              {list.map((item) => (
-                <ActivityCard key={item.id} {...item} />
-              ))}
-              {!loading && list.length === 0 && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 text-center">
-                  <div className="text-gray-400 mb-2">
-                    <svg
-                      className="w-12 h-12 mx-auto"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500 text-lg">暂无相关活动</p>
-                  <p className="text-gray-400 text-sm mt-1">
-                    试试更换搜索关键词
-                  </p>
+          <div className="space-y-4 sm:space-y-6">
+            {list.map((item) => (
+              <ActivityCard key={item.id} {...item} />
+            ))}
+            {loading && (
+              <div className="flex justify-center py-4">
+                <Spin />
+              </div>
+            )}
+            {!loading && list.length === 0 && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 text-center">
+                <div className="text-gray-400 mb-2">
+                  <svg
+                    className="w-12 h-12 mx-auto"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
                 </div>
-              )}
-            </div>
-          </Spin>
+                <p className="text-gray-500 text-lg">暂无相关活动</p>
+                <p className="text-gray-400 text-sm mt-1">试试更换搜索关键词</p>
+              </div>
+            )}
+            {!loading && !hasMore && list.length > 0 && (
+              <div className="text-center py-4 text-gray-400">
+                没有更多活动了
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

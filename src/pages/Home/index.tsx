@@ -69,7 +69,7 @@ const HomePage: React.FC = () => {
           <NoticeBar
             scrollable
             text={'ai助手上线了，限时免费体验，抓紧体验吧！'.repeat(1)}
-            className="rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-100"
+            className="rounded-lg !bg-indigo-50 !text-indigo-600 border !border-indigo-100"
             style={{
               '--rv-notice-bar-height': '40px',
               '--rv-notice-bar-padding': '0 16px',
@@ -161,7 +161,13 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* 信息列表专区 */}
-        <TitleWrapperCard title="活动列表" isShowAllEntry>
+        <TitleWrapperCard
+          title="最新活动"
+          isShowAllEntry
+          allEntryCb={() => {
+            navigate('/list');
+          }}
+        >
           <div className="space-y-4 sm:space-y-6">
             {list.map((item) => (
               <ActivityCard key={item.id} {...item} />
