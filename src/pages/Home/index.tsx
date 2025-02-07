@@ -3,7 +3,6 @@ import { NavigationBar, TitleWrapperCard } from '@/components';
 import { useNavigate } from '@umijs/max';
 import { message } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
 import { ActivityCard, AiFloatCircle } from './components';
 
 const HomePage: React.FC = () => {
@@ -53,26 +52,21 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div
-      className={twMerge(
-        'min-h-screen bg-gradient-to-br from-blue-50 to-purple-50',
-      )}
-    >
-      {/* 导航栏 */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
       <NavigationBar />
 
-      {/* 主要内容区 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* 信息分类专区 */}
-        <div className="flex flex-col items-center gap-4 sm:gap-6 mb-8 sm:mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-center">
+        <div className="flex flex-col items-center gap-4 sm:gap-6 mb-8 sm:mb-10 animate__animated animate__fadeInDown">
+          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent text-center animate__animated animate__pulse animate__infinite">
             校园服务
           </h2>
           <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            {tagList.map((item) => (
+            {tagList.map((item, index) => (
               <div
                 key={item.title}
-                className="flex flex-col items-center gap-3 bg-white/90 p-6 rounded-2xl shadow-md cursor-pointer hover:shadow-xl hover:scale-[1.02] hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 group"
+                className="flex flex-col items-center gap-3 bg-white/90 p-6 rounded-2xl shadow-md cursor-pointer hover:shadow-xl hover:scale-[1.02] hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300 group animate__animated animate__fadeInUp"
+                style={{ animationDelay: `${index * 0.2}s` }}
                 onClick={item.onClick}
               >
                 <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-white/80">
@@ -148,14 +142,21 @@ const HomePage: React.FC = () => {
         {/* 信息列表专区 */}
         <TitleWrapperCard title="活动列表" isShowAllEntry>
           <div className="space-y-4 sm:space-y-6">
-            {list.map((item) => (
-              <ActivityCard key={item.id} {...item} />
+            {list.map((item, index) => (
+              <div
+                key={item.id}
+                className="animate__animated animate__fadeInRight"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <ActivityCard {...item} />
+              </div>
             ))}
           </div>
         </TitleWrapperCard>
 
-        {/* AI悬浮小球 */}
-        <AiFloatCircle />
+        <div className="animate__animated animate__bounceIn animate__delay-1s fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50 ">
+          <AiFloatCircle />
+        </div>
       </div>
     </div>
   );
