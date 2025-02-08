@@ -23,14 +23,15 @@ const HomePage: React.FC = () => {
       {
         title: '学术论坛',
         onClick: () => {
-          message.error('暂未开放，尽情期待');
-          // navigate('/conversation');
+          // message.error('暂未开放，尽情期待');
+          navigate('/chat');
         },
       },
       {
         title: '二手交易',
         onClick: () => {
           message.error('暂未开放，尽情期待');
+          // navigate('/chat');
         },
       },
       {
@@ -68,7 +69,9 @@ const HomePage: React.FC = () => {
         <div className="mb-8">
           <NoticeBar
             scrollable
-            text={'ai助手上线了，限时免费体验，抓紧体验吧！'.repeat(1)}
+            text={'ai助手上线了，限时免费体验，抓紧体验吧！实时聊天室也上线了'.repeat(
+              1,
+            )}
             className="rounded-lg !bg-indigo-50 !text-indigo-600 border !border-indigo-100"
             style={{
               '--rv-notice-bar-height': '40px',

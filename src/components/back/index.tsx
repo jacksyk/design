@@ -1,11 +1,19 @@
 import { useNavigate } from '@umijs/max';
+import { twMerge } from 'tailwind-merge';
 
-export const Back = () => {
+type BackProps = {
+  className: string;
+};
+
+export const Back: React.FC<BackProps> = ({ className }) => {
   const navigate = useNavigate();
 
   return (
     <div
-      className="flex items-center text-indigo-600 hover:text-indigo-800 cursor-pointer mb-4 group"
+      className={twMerge(
+        'flex items-center text-indigo-600 hover:text-indigo-800 cursor-pointer mb-4 group',
+        className,
+      )}
       onClick={() => navigate(-1)}
     >
       <svg
