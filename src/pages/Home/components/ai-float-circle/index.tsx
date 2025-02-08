@@ -15,6 +15,8 @@ export const AiFloatCircle: React.FC = () => {
 
   const [inputValue, setInputValue] = useState('');
 
+  const [disabled, setDisabled] = useState(false);
+
   const [messageList, setMessageList] = useState<
     Array<{
       content: string;
@@ -36,11 +38,15 @@ export const AiFloatCircle: React.FC = () => {
   });
 
   const handleSendSteam = useMemoizedFn(async () => {
+    if (inputValue) {
+      return;
+    }
     scrollToBottom();
     let count = 0;
 
     bufferMessage.current = [];
     bufferMessage.current.push(...messageList);
+    setDisabled(true);
 
     const joinMessage = [
       {
@@ -104,6 +110,7 @@ export const AiFloatCircle: React.FC = () => {
           done = currentDone;
           if (done) {
             handleValue(value);
+            setDisabled(false);
             return;
           }
           handleValue(value);
@@ -200,9 +207,10 @@ export const AiFloatCircle: React.FC = () => {
                 onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setInputValue(e.target.value);
                 }}
+                disabled={disabled}
                 value={inputValue}
                 type="text"
-                placeholder="输入你的问题..."
+                placeholder={disabled ? '正在输出中...' : '输入你的问题...'}
                 className="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500"
               />
               <div
@@ -232,7 +240,11 @@ export const AiFloatCircle: React.FC = () => {
       {/* 悬浮球按钮 */}
       <div
         onClick={() => setShowAIChat(!showAIChat)}
-        className="w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center text-white"
+        className={twMerge(
+          'w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 flex items-center justify-center text-white',
+          !showAIChat &&
+            'animate__animated animate__heartBeat animate__repeat-2',
+        )}
       >
         <svg
           className="w-7 h-7"

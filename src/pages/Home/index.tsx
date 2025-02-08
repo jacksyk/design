@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
         },
       },
       {
-        title: '学术论坛',
+        title: '在线聊天',
         onClick: () => {
           // message.error('暂未开放，尽情期待');
           navigate('/chat');
@@ -94,7 +94,7 @@ const HomePage: React.FC = () => {
                 onClick={item.onClick}
               >
                 <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center group-hover:bg-white/80">
-                  {item.title === '学术论坛' && (
+                  {item.title === '在线聊天' && (
                     <svg
                       className="w-6 h-6 text-indigo-600"
                       fill="none"

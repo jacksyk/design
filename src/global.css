@@ -22,3 +22,16 @@
 .animate__fadeInFast__duration-150 {
   animation-duration: 0.15s; /* 将动画速度调整为 0.5 秒 */
 }
+.animate__pulse {
+  --animate-duration: 2s;
+}
+.animate__bounce {
+  --animate-duration: 1.5s;
+}
+.animate__rubberBand {
+  --animate-duration: 1s;
+}
+.animate__heartBeat {
+  --animate-duration: 1.3s;
+  --animate-delay: 1s;
+}

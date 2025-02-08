@@ -8,9 +8,9 @@ import type { RequestConfig } from 'umi';
 
 import { RequestOptions } from '@umijs/max';
 import { message } from 'antd';
-import VConsole from 'vconsole';
+// import VConsole from 'vconsole';
 
-new VConsole();
+// new VConsole();
 
 export async function getInitialState(): Promise<{ name: string }> {
   return { name: '@umijs/max' };

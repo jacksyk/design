@@ -1,8 +1,8 @@
 import { Back } from '@/components';
 import { useMount, useUnmount } from 'ahooks';
-import { Avatar, Button, Input, Switch } from 'antd';
+import { Avatar, Button, Input, message, Switch } from 'antd';
 import dayjs from 'dayjs';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 
 // 首先修改消息类型的定义
@@ -12,7 +12,12 @@ const Chat = () => {
   /** 暗黑模式适配 */
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  /** 当前人数 */
+  const [count, setCount] = useState(0);
+
   const socket = useRef<Socket>();
+
+  const container = useRef<HTMLDivElement>(null);
 
   const userName = useRef('用户' + Math.random().toString(36).slice(-4));
   /** 系统消息 */
@@ -46,8 +51,17 @@ const Chat = () => {
 
   /** 滑动到底部 */
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (container.current) {
+      container.current.scrollTo({
+        top: container.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -70,8 +84,8 @@ const Chat = () => {
   };
 
   useMount(() => {
-    socket.current = io('http://localhost:3000');
-    // socket.current = io('http://47.122.119.171:3000');
+    // socket.current = io('http://localhost:3000');
+    socket.current = io('http://47.122.119.171:3000');
     /** 监听链接 */
     socket.current.on('connect', () => {
       if (socket.current) {
@@ -107,6 +121,12 @@ const Chat = () => {
         setMessages((prev) => [...prev, joinMessage]);
       },
     );
+
+    /** personCount */
+    socket.current.on('count', (response: { count: number }) => {
+      const { count } = response;
+      setCount(count);
+    });
   });
 
   useUnmount(() => {
@@ -114,9 +134,27 @@ const Chat = () => {
       socket.current.emit('leave', {
         username: userName.current,
       });
-      socket.current?.disconnect();
+      // socket.current.disconnect(); 如果这里关闭，会导致丢包
     }
   });
+
+  useEffect(() => {
+    // 添加页面刷新/关闭监听
+    const handleBeforeUnload = () => {
+      if (socket.current) {
+        socket.current.emit('leave', {
+          username: userName.current,
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // 清理事件监听
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   return (
     <div
@@ -142,13 +180,24 @@ const Chat = () => {
                 : 'text-gray-600 hover:text-gray-900 mb-0'
             }
           />
-          <h1
-            className={`text-lg font-medium ${
-              isDarkMode ? 'text-white' : 'text-gray-800'
-            }`}
-          >
-            热门话题：校园二手交易平台如何发展
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1
+              className={`text-lg font-medium ${
+                isDarkMode ? 'text-white' : 'text-gray-800'
+              }`}
+            >
+              当前聊天室：
+            </h1>
+            <span
+              className={`px-2 py-1 text-xs rounded-full ${
+                isDarkMode
+                  ? 'bg-gray-800 text-gray-300'
+                  : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              {count} 人在线
+            </span>
+          </div>
         </div>
         <Switch
           checkedChildren="🌙"
@@ -160,7 +209,7 @@ const Chat = () => {
       </div>
 
       {/* 聊天区域 */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
+      <div className="flex-1 overflow-y-auto px-4 py-6" ref={container}>
         <div className="max-w-4xl mx-auto space-y-4">
           {messages.map((message, index) => (
             <div
