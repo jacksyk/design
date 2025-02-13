@@ -1,6 +1,6 @@
 import { Back } from '@/components';
 import { useMount, useUnmount } from 'ahooks';
-import { Avatar, Button, Input, message, Switch } from 'antd';
+import { Avatar, Button, Input, message, Modal, Switch } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
@@ -11,6 +11,21 @@ type MessageType = 'user' | 'other' | 'system';
 const Chat = () => {
   /** 暗黑模式适配 */
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const [showEmojiModal, setShowEmojiModal] = useState(false);
+  const [customEmojis] = useState([
+    '😊',
+    '😂',
+    '🤣',
+    '❤️',
+    '😍',
+    '🎉',
+    '👍',
+    '🌹',
+    '🎂',
+    '🌞',
+    // 这里可以添加更多默认表情
+  ]);
 
   /** 当前人数 */
   const [count, setCount] = useState(0);
@@ -119,6 +134,15 @@ const Chat = () => {
       setCount(+count);
     });
   });
+
+  const handleEmojiClick = (emoji: string) => {
+    if (socket.current) {
+      socket.current.emit('sendMessage', {
+        content: emoji,
+        timestamp: Date.now(),
+      });
+    }
+  };
 
   useUnmount(() => {
     if (socket.current) {
@@ -319,6 +343,19 @@ const Chat = () => {
         }`}
       >
         <div className="max-w-4xl mx-auto flex gap-3">
+          <div className="flex gap-2">
+            <Button
+              type="text"
+              onClick={() => setShowEmojiModal(true)}
+              className={`flex items-center justify-center ${
+                isDarkMode
+                  ? 'text-gray-400 hover:text-white'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              😊
+            </Button>
+          </div>
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -345,6 +382,33 @@ const Chat = () => {
           </Button>
         </div>
       </div>
+
+      {/* 表情包管理弹窗 */}
+      <Modal
+        title="表情包"
+        open={showEmojiModal}
+        onCancel={() => setShowEmojiModal(false)}
+        footer={null}
+        className={isDarkMode ? 'dark-modal' : ''}
+      >
+        <div className="grid grid-cols-5 gap-4 p-4">
+          {customEmojis.map((emoji, index) => (
+            <Button
+              key={index}
+              type="text"
+              className={`text-2xl hover:scale-110 transition-transform ${
+                isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+              }`}
+              onClick={() => {
+                handleEmojiClick(emoji);
+                setShowEmojiModal(false);
+              }}
+            >
+              {emoji}
+            </Button>
+          ))}
+        </div>
+      </Modal>
     </div>
   );
 };
