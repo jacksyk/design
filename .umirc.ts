@@ -1,5 +1,6 @@
 import { defineConfig } from '@umijs/max';
 import path from 'path';
+console.log(process.env.NODE_ENV, '>>>');
 
 export default defineConfig({
   hash: true,
@@ -16,4 +17,5 @@ export default defineConfig({
   clickToComponent: {
     editor: 'Trae',
   },
+  define: { 'process.env.NODE_ENV': process.env.NODE_ENV },
 });

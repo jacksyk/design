@@ -31,8 +31,12 @@ export const request: RequestConfig = {
     (config: RequestOptions) => {
       // 从localStorage中获取token
       const token = localStorage.getItem('token');
-
-      config.baseURL = 'http://47.122.119.171:3000';
+      const baseUrl =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000'
+          : 'http://47.122.119.171:3000';
+      console.log(baseUrl, 'baseUrl');
+      config.baseURL = baseUrl;
       // config.baseURL = 'http://localhost:3000';
       // 如果token存在，将其添加到请求头中
       if (token) {

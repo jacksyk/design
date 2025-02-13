@@ -90,8 +90,11 @@ const Chat = () => {
   };
 
   useMount(() => {
-    // socket.current = io('http://47.122.119.171:3000');
-    socket.current = io('http://localhost:3000');
+    const socketUrl =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3000'
+        : 'http://47.122.119.171:3000';
+    socket.current = io(socketUrl);
     /** 监听链接 */
     socket.current.on('connect', () => {
       if (socket.current) {

@@ -3,6 +3,7 @@
   "author": "舒毅康 <185901261@qq.com>",
   "scripts": {
     "build": "max build",
+    "build:preview": "npm run build && serve dist",
     "deploy:web": "bash deploy.sh",
     "dev": "max dev",
     "format": "prettier --cache --write .",
@@ -32,6 +33,7 @@
     "@types/lodash-es": "^4.17.12",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
+    "cross-env": "^7.0.3",
     "glob": "^11.0.1",
     "husky": "^9",
     "lint-staged": "^13.2.0",
@@ -39,6 +41,7 @@
     "prettier": "^2.8.7",
     "prettier-plugin-organize-imports": "^3.2.2",
     "prettier-plugin-packagejson": "^2.4.3",
+    "serve": "^14.2.4",
     "tailwindcss": "^3",
     "typescript": "^5.0.3"
   }
