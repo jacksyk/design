@@ -71,24 +71,16 @@ const Chat = () => {
         timestamp: Date.now(),
       });
     }
-    // setMessages([
-    //   ...messages,
-    //   {
-    //     content: inputValue,
-    //     type: 'user',
-    //     timestamp: Date.now(),
-    //     username: '用户',
-    //   },
-    // ]);
     setInputValue('');
   };
 
   useMount(() => {
-    // socket.current = io('http://localhost:3000');
-    socket.current = io('http://47.122.119.171:3000');
+    // socket.current = io('http://47.122.119.171:3000');
+    socket.current = io('http://localhost:3000');
     /** 监听链接 */
     socket.current.on('connect', () => {
       if (socket.current) {
+        console.log('enter');
         socket.current.emit('enter', {
           username: userName.current,
         });
@@ -110,7 +102,6 @@ const Chat = () => {
     socket.current.on(
       'message',
       (response: { content: string; timestamp: number }) => {
-        // console.log('response>>>>', response);
         const { content, timestamp } = response;
         const joinMessage = {
           content,
@@ -123,35 +114,54 @@ const Chat = () => {
     );
 
     /** personCount */
-    socket.current.on('count', (response: { count: number }) => {
+    socket.current.on('count', (response: { count: string }) => {
       const { count } = response;
-      setCount(count);
+      setCount(+count);
     });
   });
 
   useUnmount(() => {
     if (socket.current) {
-      socket.current.emit('leave', {
-        username: userName.current,
-      });
-      // socket.current.disconnect(); 如果这里关闭，会导致丢包
+      socket.current.disconnect();
     }
   });
 
   useEffect(() => {
-    // 添加页面刷新/关闭监听
-    const handleBeforeUnload = () => {
-      if (socket.current) {
-        socket.current.emit('leave', {
-          username: userName.current,
-        });
-      }
+    // 监听标签页切换
+    // const handleVisibilityChange = () => {
+    //   if (document.visibilityState === 'hidden') {
+    //     socket.current?.disconnect();
+    //   } else if (document.visibilityState === 'visible') {
+    //     socket.current?.connect();
+    //   }
+    // };
+
+    const handleOffline = () => {
+      message.error('网络连接已断开');
+      socket.current?.disconnect();
     };
 
+    const handleOnline = () => {
+      message.success('网络已重新连接');
+      socket.current?.connect();
+    };
+
+    const handleBeforeUnload = () => {
+      socket.current?.disconnect();
+    };
+
+    // 监听标签页切换
+    // document.addEventListener('visibilitychange', handleVisibilityChange);
+    // 监听网络状态
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+    // 页面关闭
     window.addEventListener('beforeunload', handleBeforeUnload);
 
-    // 清理事件监听
     return () => {
+      // document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
