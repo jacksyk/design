@@ -317,9 +317,19 @@ const DetailPage: React.FC = () => {
                   className="border-l-4 border-gray-200 pl-3 sm:pl-4"
                 >
                   <div className="flex items-center space-x-3 mb-2">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 flexCenter text-xs sm:text-sm">
-                      用户
-                    </div>
+                    {avatar ? (
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flexCenter text-xs sm:text-sm">
+                        <img
+                          src={item.avatar}
+                          alt=""
+                          className="size-full rounded-[50%]"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 flexCenter text-xs sm:text-sm">
+                        用户
+                      </div>
+                    )}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4">
                       <span className="font-medium text-gray-800 text-sm sm:text-base">
                         {item.userName}

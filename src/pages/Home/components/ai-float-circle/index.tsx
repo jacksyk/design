@@ -1,4 +1,5 @@
 import { useMemoizedFn } from 'ahooks';
+import { message } from 'antd';
 import React, { useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { AssistantMessage, UserMessage } from './components';
@@ -38,7 +39,8 @@ export const AiFloatCircle: React.FC = () => {
   });
 
   const handleSendSteam = useMemoizedFn(async () => {
-    if (inputValue) {
+    if (!inputValue.length) {
+      message.info('请输入信息');
       return;
     }
     scrollToBottom();
@@ -64,8 +66,12 @@ export const AiFloatCircle: React.FC = () => {
     setInputValue('');
 
     try {
+      const host =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000'
+          : 'http://47.122.119.171:3000';
       // http://47.122.119.171:3000/sse
-      const response = await fetch(`http://47.122.119.171:3000/sse`, {
+      const response = await fetch(`${host}/sse`, {
         method: 'POST', // 使用 post 方法
         headers: {
           Accept: 'text/event-stream', // 可写可不写，写上明确表明需要返回数据流

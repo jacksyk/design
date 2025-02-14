@@ -2,7 +2,7 @@ import { useNavigate } from '@umijs/max';
 import { twMerge } from 'tailwind-merge';
 
 type BackProps = {
-  className: string;
+  className?: string;
 };
 
 export const Back: React.FC<BackProps> = ({ className }) => {
