@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
         title: '资源库工具',
         onClick: () => {
           navigate('/onlineToolbox');
-          message.error('暂未开放，尽情期待');
+          // message.error('暂未开放，尽情期待');
         },
       },
       // {
