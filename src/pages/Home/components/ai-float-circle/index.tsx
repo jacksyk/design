@@ -4,13 +4,17 @@ import React, { useRef, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { AssistantMessage, UserMessage } from './components';
 
+type AiFloatCircleType = {
+  className?: string;
+};
+
 const handleStreamMeeage = (data: string) => {
   // 将数据流按行分割
   const lines = data.split('messageType:line').filter((item) => item !== '');
   return lines.pop() ?? '';
 };
 
-export const AiFloatCircle: React.FC = () => {
+export const AiFloatCircle: React.FC<AiFloatCircleType> = ({ className }) => {
   // 添加控制AI助手显示状态的state
   const [showAIChat, setShowAIChat] = useState(false);
 
@@ -131,7 +135,12 @@ export const AiFloatCircle: React.FC = () => {
   });
 
   return (
-    <div className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50">
+    <div
+      className={twMerge(
+        'fixed bottom-4 sm:bottom-8 right-4 sm:right-8 z-50',
+        className,
+      )}
+    >
       {showAIChat && (
         <div
           className={twMerge(

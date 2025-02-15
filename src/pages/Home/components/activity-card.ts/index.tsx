@@ -3,11 +3,25 @@ import { joinUrlParams } from '@/utils';
 import { useNavigate } from '@umijs/max';
 import dayjs from 'dayjs';
 import { useCallback } from 'react';
-type ActivityCardType = Partial<getAllActivityResponse['data'][0]>;
+import { twMerge } from 'tailwind-merge';
+type ActivityCardType = Partial<
+  getAllActivityResponse['data'][0] & {
+    className: string;
+  }
+>;
 
 export const ActivityCard: React.FC<ActivityCardType> = (props) => {
-  const { avatar, createTime, description, id, likes, title, username, views } =
-    props;
+  const {
+    avatar,
+    createTime,
+    description,
+    id,
+    likes,
+    title,
+    username,
+    views,
+    className,
+  } = props;
 
   const navigate = useNavigate();
 
@@ -21,7 +35,10 @@ export const ActivityCard: React.FC<ActivityCardType> = (props) => {
 
   return (
     <div
-      className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400 group cursor-pointer"
+      className={twMerge(
+        'bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-indigo-400 group cursor-pointer',
+        className,
+      )}
       onClick={handleClickToDetail}
     >
       <h2 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-3 sm:mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 transition-colors overflow-hidden text-nowrap text-ellipsis">
