@@ -1,5 +1,5 @@
 import { createActivity } from '@/api';
-import { Back } from '@/components';
+import { Back, MyEditor } from '@/components';
 import { useNavigate } from '@umijs/max';
 import { useMemoizedFn } from 'ahooks';
 import { DatePicker, message } from 'antd';
@@ -38,29 +38,38 @@ const PublishPage: React.FC = () => {
     endTime: number;
     title: string;
     content: string;
+    description: string;
   }>({
     startTime: 0,
     endTime: 0,
     title: '',
     content: '',
+    description: '',
   });
+
+  useEffect(() => {
+    console.log('formValue', formValue);
+  }, [formValue]);
 
   /** 日期选择器 */
   const onTimeRangeChange = useMemoizedFn((_: any, dateString: any) => {
     const startTime = dayjs(dateString[0]).valueOf();
     const endTime = dayjs(dateString[1]).valueOf();
-    setFormValue({
-      ...formValue,
+    setFormValue((prev) => ({
+      ...prev,
       startTime,
       endTime,
-    });
+    }));
   });
 
   /** 创建活动 */
   const sendCreateActivity = useMemoizedFn(() => {
+    console.log(formValue, '>>>>');
+
     createActivity({
       title: formValue.title,
-      description: formValue.content,
+      description: formValue.description,
+      content: formValue.content,
       start_time: formValue.startTime,
       end_time: formValue.endTime,
     }).then(() => {
@@ -115,10 +124,10 @@ const PublishPage: React.FC = () => {
                       ...time,
                       startTime: value,
                     });
-                    setFormValue({
-                      ...formValue,
+                    setFormValue((prev) => ({
+                      ...prev,
                       startTime: new Date(value).getTime(),
-                    });
+                    }));
                   }}
                 >
                   {(val: any, _: any, actions: any) => (
@@ -148,10 +157,10 @@ const PublishPage: React.FC = () => {
                       ...time,
                       endTime: value,
                     });
-                    setFormValue({
-                      ...formValue,
+                    setFormValue((prev) => ({
+                      ...prev,
                       endTime: new Date(value).getTime(),
-                    });
+                    }));
                   }}
                 >
                   {(val: any, _: any, actions: any) => (
@@ -180,10 +189,28 @@ const PublishPage: React.FC = () => {
               placeholder="请输入标题"
               className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setFormValue({
-                  ...formValue,
+                setFormValue((prev) => ({
+                  ...prev,
                   title: e.target.value,
-                });
+                }));
+              }}
+            />
+          </div>
+
+          {/* 描述输入 */}
+          <div className="mb-4 sm:mb-6">
+            <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
+              描述
+            </label>
+            <input
+              type="text"
+              placeholder="请输入描述"
+              className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFormValue((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }));
               }}
             />
           </div>
@@ -193,33 +220,15 @@ const PublishPage: React.FC = () => {
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
               内容
             </label>
-            <textarea
-              rows={6}
-              placeholder="请输入内容"
-              className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              onInput={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                setFormValue({
-                  ...formValue,
-                  content: e.target.value,
-                });
+            <MyEditor
+              onChangeContent={(html: string) => {
+                setFormValue((prev) => ({
+                  ...prev,
+                  content: html,
+                }));
               }}
             />
           </div>
-
-          {/* 图片上传 */}
-          {/* <div className="mb-6 sm:mb-8">
-            <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
-              添加图片
-            </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-8 text-center">
-              <div className="text-gray-500">
-                <p className="text-sm sm:text-base">点击或拖拽图片到此处上传</p>
-                <p className="text-xs sm:text-sm mt-1 sm:mt-2">
-                  支持 jpg、png 格式
-                </p>
-              </div>
-            </div>
-          </div> */}
 
           {/* 提交按钮 */}
           <div className="flex justify-end">

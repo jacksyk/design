@@ -5,6 +5,7 @@ type Request = {
   description: string;
   start_time: number;
   end_time: number;
+  content: string;
 };
 
 export const createActivity = (data: Request) => {

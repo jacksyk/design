@@ -114,7 +114,7 @@ const FeedbackPage: React.FC = () => {
           {/* 提交按钮 */}
           <div className="flex justify-end">
             <div
-              className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300"
+              className="w-full sm:w-auto bg-indigo-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors duration-300 flexCenter"
               onClick={handleSendMessage}
             >
               提交反馈

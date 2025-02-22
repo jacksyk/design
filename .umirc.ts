@@ -15,7 +15,7 @@ export default defineConfig({
   tailwindcss: {},
   devtool: 'source-map',
   clickToComponent: {
-    editor: 'Trae',
+    editor: 'cursor',
   },
   define: { 'process.env.NODE_ENV': process.env.NODE_ENV },
 });

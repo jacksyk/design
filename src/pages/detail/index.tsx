@@ -31,12 +31,12 @@ const DetailPage: React.FC = () => {
   const {
     collections,
     createTime,
-    description,
     likes,
     title,
     username,
     views,
     avatar,
+    content,
   } = getOneActivityResponse ?? {};
 
   const resetComment = useMemoizedFn(() => {
@@ -192,7 +192,11 @@ const DetailPage: React.FC = () => {
           {/* 内容 */}
           <div className="prose max-w-none mb-6 sm:mb-8">
             <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-              {description}
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: content ?? '',
+                }}
+              ></div>
             </p>
           </div>
 

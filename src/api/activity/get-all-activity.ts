@@ -18,6 +18,8 @@ export type getAllActivityResponse = {
     title: string;
     /** 活动描述 */
     description: string;
+    /** 活动内容 */
+    content: string;
     /** 创建时间 */
     createTime: string;
     /** 用户id */
@@ -49,6 +51,7 @@ export const getAllActivity = (data: Request) =>
             id: item.id,
             title: item.title,
             description: item.description,
+            content: item.content,
             createTime: dayjs(item.created_at).format('YYYY-MM-DD HH:mm:ss'),
             likes: item.likes,
             views: item.views,

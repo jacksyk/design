@@ -45,7 +45,7 @@ export const ActivityCard: React.FC<ActivityCardType> = (props) => {
         {title}
       </h2>
       <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed truncate whitespace-nowrap overflow-hidden">
-        {description}
+        {description ?? ''}
       </p>
       <div className="flex flex-wrap items-center justify-between gap-4 text-sm sm:text-base text-gray-500">
         <div className="flex items-center space-x-4 sm:space-x-6">
