@@ -93,7 +93,7 @@ const Chat = () => {
     const socketUrl =
       process.env.NODE_ENV === 'development'
         ? 'http://localhost:3000'
-        : 'http://47.122.119.171:3000';
+        : 'https://www.shuyikang.online/api';
     socket.current = io(socketUrl);
     /** 监听链接 */
     socket.current.on('connect', () => {

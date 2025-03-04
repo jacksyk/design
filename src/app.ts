@@ -34,7 +34,7 @@ export const request: RequestConfig = {
       const baseUrl =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:3000'
-          : 'http://47.122.119.171:3000';
+          : 'https://www.shuyikang.online/api';
       console.log(baseUrl, 'baseUrl');
       config.baseURL = baseUrl;
       // config.baseURL = 'http://localhost:3000';

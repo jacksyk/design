@@ -23,7 +23,7 @@ npm run build
 # 3. 传输文件到服务器
 echo -e "${GREEN}3. 传输文件到服务器...${NC}"
 ssh $SERVER_USER@$SERVER_IP "mkdir -p $REMOTE_DIR"
-scp -r dist docker-compose.yml nginx.conf Dockerfile $SERVER_USER@$SERVER_IP:$REMOTE_DIR
+scp -r dist ssl docker-compose.yml nginx.conf Dockerfile $SERVER_USER@$SERVER_IP:$REMOTE_DIR
 
 # 4. 在服务器上部署
 echo -e "${GREEN}4. 在服务器上部署...${NC}"
