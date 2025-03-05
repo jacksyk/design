@@ -73,7 +73,7 @@ export const AiFloatCircle: React.FC<AiFloatCircleType> = ({ className }) => {
       const host =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:3000'
-          : 'https://www.shuyikang.online/api';
+          : 'https://www.shuyikang.online:3000';
       // http://47.122.119.171:3000/sse
       const response = await fetch(`${host}/sse`, {
         method: 'POST', // 使用 post 方法
