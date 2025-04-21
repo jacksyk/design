@@ -33,6 +33,8 @@ export type getOneActivityResponse = {
     isLiked: boolean;
     /** 用户对当前文章的收藏状态 */
     isCollected: boolean;
+    /** tags */
+    tags?: string;
   };
 };
 
@@ -57,6 +59,7 @@ export const getOneActivity = (data: Request) =>
           userId: item.user.id,
           isLiked: item.isLiked,
           isCollected: item.isCollected,
+          tags: item.tags,
         };
 
         resolve({

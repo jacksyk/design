@@ -2,7 +2,7 @@ import { createUser, login, sendEmail } from '@/api';
 import { useNavigate } from '@umijs/max';
 import { useMemoizedFn } from 'ahooks';
 import { message } from 'antd';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isSendEmail, setIsSendEmail] = useState(false);
@@ -13,6 +13,8 @@ const Login = () => {
     code: '',
   });
   const navigate = useNavigate();
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleLogin = useMemoizedFn(() => {
     if (isLogin) {
@@ -62,6 +64,16 @@ const Login = () => {
               onChange={(e) =>
                 setFormValue({ ...formValue, studentId: e.target.value })
               }
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  if (formValue.password.length === 0) {
+                    if (inputRef.current) {
+                      inputRef.current.focus()
+                    }
+                  }
+                  handleLogin();
+                }
+              }}
             />
           </div>
 
@@ -70,10 +82,12 @@ const Login = () => {
               type="password"
               className="w-full p-2.5 sm:p-3 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
               placeholder="密码"
+              ref={inputRef}
               value={formValue.password}
               onChange={(e) =>
                 setFormValue({ ...formValue, password: e.target.value })
               }
+              onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
             />
           </div>
 
@@ -89,6 +103,7 @@ const Login = () => {
                     email: e.target.value,
                   })
                 }
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
             </div>
           )}
@@ -105,6 +120,7 @@ const Login = () => {
                     code: e.target.value,
                   })
                 }
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
               />
             </div>
           )}

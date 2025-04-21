@@ -37,7 +37,10 @@ const DetailPage: React.FC = () => {
     views,
     avatar,
     content,
+    tags,
   } = getOneActivityResponse ?? {};
+
+  console.log('getOneActivityResponse', getOneActivityResponse);
 
   const resetComment = useMemoizedFn(() => {
     if (id) {
@@ -132,7 +135,9 @@ const DetailPage: React.FC = () => {
       getOneActivity({
         activityId: +id,
       }).then((res) => {
-        setGetOneActivityResponse(res.data);
+        setGetOneActivityResponse({
+          ...res.data,
+        });
         setIsLiked(res.data.isLiked);
         setIsCollected(res.data.isCollected);
         // 每次成功看到内容，都请求一次view
@@ -157,7 +162,7 @@ const DetailPage: React.FC = () => {
               {title}
             </h1>
             <span className="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm self-start sm:self-auto">
-              学术交流
+              {tags}
             </span>
           </div>
 

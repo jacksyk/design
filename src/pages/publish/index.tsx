@@ -39,13 +39,35 @@ const PublishPage: React.FC = () => {
     title: string;
     content: string;
     description: string;
+    tags: string;
+    type:
+      | 'campus' // 校园活动
+      | 'academic' // 教务通知
+      | 'tutor'; // 导员通知;
   }>({
     startTime: 0,
     endTime: 0,
     title: '',
     content: '',
     description: '',
+    tags: '',
+    type: 'campus',
   });
+
+  const typeList = [
+    {
+      title: '校园活动',
+      value: 'campus',
+    },
+    {
+      title: '教务通知',
+      value: 'academic',
+    },
+    {
+      title: '导员通知',
+      value: 'tutor',
+    },
+  ];
 
   useEffect(() => {
     console.log('formValue', formValue);
@@ -64,14 +86,14 @@ const PublishPage: React.FC = () => {
 
   /** 创建活动 */
   const sendCreateActivity = useMemoizedFn(() => {
-    console.log(formValue, '>>>>');
-
     createActivity({
       title: formValue.title,
       description: formValue.description,
       content: formValue.content,
       start_time: formValue.startTime,
       end_time: formValue.endTime,
+      tags: formValue.tags,
+      type: formValue.type,
     }).then(() => {
       message.success('发布成功');
       navigate('/home');
@@ -82,12 +104,10 @@ const PublishPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-4 sm:py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* 返回按钮 */}
-
         <Back></Back>
-
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-8">
           <h1 className="text-xl sm:text-2xl font-bold text-indigo-800 mb-6 sm:mb-8">
-            发布活动
+            发布模块(教务通知、导员通知、活动通知)
           </h1>
 
           {/* 选择日期 */}
@@ -210,6 +230,51 @@ const PublishPage: React.FC = () => {
                 setFormValue((prev) => ({
                   ...prev,
                   description: e.target.value,
+                }));
+              }}
+            />
+          </div>
+
+          {/* 活动类型 */}
+          <div className="mb-4 sm:mb-6">
+            <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
+              通知类型
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {typeList.map((item) => (
+                <div
+                  key={item.value}
+                  className={`text-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-300 ${
+                    formValue.type === item.value
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  onClick={() => {
+                    setFormValue((prev: any) => ({
+                      ...prev,
+                      type: item.value,
+                    }));
+                  }}
+                >
+                  {item.title}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 活动标签 */}
+          <div className="mb-4 sm:mb-6">
+            <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
+              活动（通知）标签
+            </label>
+            <input
+              type="text"
+              placeholder="请输入活动标签"
+              className="w-full border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onInput={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFormValue((prev) => ({
+                  ...prev,
+                  tags: e.target.value,
                 }));
               }}
             />

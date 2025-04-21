@@ -223,7 +223,7 @@ const Chat = () => {
                 isDarkMode ? 'text-white' : 'text-gray-800'
               }`}
             >
-              当前聊天室：
+              匿名聊天室：
             </h1>
             <span
               className={`px-2 py-1 text-xs rounded-full ${

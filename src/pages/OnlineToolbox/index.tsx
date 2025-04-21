@@ -1,15 +1,6 @@
 import { AllToolTypes, getAllTags, getAllTool } from '@/api';
 import { Back } from '@/components';
-import {
-  BookOutlined,
-  CalculatorOutlined,
-  ClockCircleOutlined,
-  CodeOutlined,
-  CompassOutlined,
-  FileTextOutlined,
-  LinkOutlined,
-  TranslationOutlined,
-} from '@ant-design/icons';
+import { BookOutlined } from '@ant-design/icons';
 import { useMount } from 'ahooks';
 import { Card, Input, Space, Tabs, Tag } from 'antd';
 import { useEffect, useRef, useState } from 'react';
