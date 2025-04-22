@@ -3,7 +3,7 @@ import { Back } from '@/components';
 import { BookOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from '@umijs/max';
 import { useMount } from 'ahooks';
-import { Button, Card, Input, Space, Tabs, Tag } from 'antd';
+import { Button, Card, Empty, Input, Space, Tabs, Tag } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 type TagType = {
@@ -102,44 +102,50 @@ const OnlineToolbox = () => {
       </div>
 
       {/* 工具卡片列表 */}
-      <div className="max-w-6xl mx-auto p-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {tools.map((tool) => (
-            <Card
-              key={tool.id}
-              hoverable
-              className="h-full bg-white/80 backdrop-blur-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300"
-              onClick={() => {
-                // TODO: 处理工具跳转
-                // console.log('跳转到:', tool.link);
-                window.open(tool.link);
-              }}
-            >
-              <div className="flex flex-col h-full">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm">
-                    {/* {tool.icon ?? ''} */}
-                    <BookOutlined></BookOutlined>
+      {tools.length > 0 ? (
+        <div className="max-w-6xl mx-auto p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {tools.map((tool) => (
+              <Card
+                key={tool.id}
+                hoverable
+                className="h-full bg-white/80 backdrop-blur-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300"
+                onClick={() => {
+                  // TODO: 处理工具跳转
+                  // console.log('跳转到:', tool.link);
+                  window.open(tool.link);
+                }}
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm">
+                      {/* {tool.icon ?? ''} */}
+                      <BookOutlined></BookOutlined>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-medium mb-1 text-gray-800">
+                        {tool.title}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        {tool.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-medium mb-1 text-gray-800">
-                      {tool.title}
-                    </h3>
-                    <p className="text-sm text-gray-500">{tool.description}</p>
-                  </div>
+                  <Space size={[0, 8]} wrap className="mt-3">
+                    {tool.tags.map((tag) => (
+                      <Tag key={tag.id} className="bg-white/60 border-blue-100">
+                        {tag.name}
+                      </Tag>
+                    ))}
+                  </Space>
                 </div>
-                <Space size={[0, 8]} wrap className="mt-3">
-                  {tool.tags.map((tag) => (
-                    <Tag key={tag.id} className="bg-white/60 border-blue-100">
-                      {tag.name}
-                    </Tag>
-                  ))}
-                </Space>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <Empty description="暂无资源" />
+      )}
     </div>
   );
 };
