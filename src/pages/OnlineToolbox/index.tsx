@@ -1,8 +1,9 @@
 import { AllToolTypes, getAllTags, getAllTool } from '@/api';
 import { Back } from '@/components';
-import { BookOutlined } from '@ant-design/icons';
+import { BookOutlined, PlusOutlined } from '@ant-design/icons';
+import { useNavigate } from '@umijs/max';
 import { useMount } from 'ahooks';
-import { Card, Input, Space, Tabs, Tag } from 'antd';
+import { Button, Card, Input, Space, Tabs, Tag } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 type TagType = {
@@ -16,6 +17,7 @@ const OnlineToolbox = () => {
   const [tags, setTags] = useState<TagType[]>([]);
   const [tools, setTools] = useState<AllToolTypes[]>([]);
   const allToolsBuffer = useRef<AllToolTypes[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (activeTag) {
@@ -59,9 +61,19 @@ const OnlineToolbox = () => {
       {/* 顶部导航栏 */}
       <div className="sticky top-0 z-10 p-4 bg-white/80 shadow-sm backdrop-blur-md">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Back className="text-lg mb-0" />
-            <h1 className="text-xl font-medium text-gray-800">在线工具箱</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Back className="text-lg mb-0" />
+              <h1 className="text-xl font-medium text-gray-800">在线工具箱</h1>
+            </div>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => navigate('/uploadFile')}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              分享资源
+            </Button>
           </div>
         </div>
       </div>

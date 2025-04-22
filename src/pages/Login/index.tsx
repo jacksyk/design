@@ -68,7 +68,7 @@ const Login = () => {
                 if (e.key === 'Enter') {
                   if (formValue.password.length === 0) {
                     if (inputRef.current) {
-                      inputRef.current.focus()
+                      inputRef.current.focus();
                     }
                   }
                   handleLogin();

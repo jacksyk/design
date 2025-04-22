@@ -1,6 +1,6 @@
 import { getAllActivity, getAllActivityResponse } from '@/api';
 import { useNavigate } from '@umijs/max';
-import { Input, Select, Spin } from 'antd';
+import { Input, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import { ActivityCard } from '../Home/components';
 
@@ -9,7 +9,6 @@ const ListPage: React.FC = () => {
   const [list, setList] = useState<getAllActivityResponse['data']>([]);
   const [loading, setLoading] = useState(false);
   const [searchKey, setSearchKey] = useState('');
-  const [filter, setFilter] = useState('all');
   const [_page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -38,7 +37,7 @@ const ListPage: React.FC = () => {
       fetchList(1, searchKey);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchKey, filter]);
+  }, [searchKey]);
 
   // 添加滚动监听
   useEffect(() => {
@@ -88,7 +87,7 @@ const ListPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                全部活动
+                全部信息
               </h1>
               <p className="text-gray-500 text-sm sm:text-base mt-1">
                 浏览所有校园活动信息
@@ -110,17 +109,26 @@ const ListPage: React.FC = () => {
                 onChange={(e) => setSearchKey(e.target.value)}
               />
             </div>
-            <Select
+
+            {/* <Select
               value={filter}
               onChange={setFilter}
               size="large"
               className="w-full sm:w-[180px]"
               options={[
                 { label: '全部类型', value: 'all' },
-                { label: '学术活动', value: 'academic' },
-                { label: '文体活动', value: 'sports' },
-                { label: '志愿服务', value: 'volunteer' },
-                { label: '其他活动', value: 'other' },
+                {
+                  label: '校园通知',
+                  value: 'campus',
+                },
+                {
+                  label: '教务通知',
+                  value: 'academic',
+                },
+                {
+                  label: '导员通知',
+                  value: 'tutor',
+                },
               ]}
               suffixIcon={
                 <svg
@@ -137,7 +145,7 @@ const ListPage: React.FC = () => {
                   />
                 </svg>
               }
-            />
+            /> */}
           </div>
         </div>
 

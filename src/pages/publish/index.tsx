@@ -1,10 +1,10 @@
-import { createActivity } from '@/api';
+import { createActivity, getUserIdentity } from '@/api';
 import { Back, MyEditor } from '@/components';
 import { useNavigate } from '@umijs/max';
-import { useMemoizedFn } from 'ahooks';
+import { useMemoizedFn, useMount } from 'ahooks';
 import { DatePicker, message } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { DatetimePicker, Field } from 'react-vant';
 
 const { RangePicker } = DatePicker;
@@ -12,6 +12,8 @@ const { RangePicker } = DatePicker;
 const PublishPage: React.FC = () => {
   const navigate = useNavigate();
   const [isMobileApp, setIsMobileApp] = useState(window.innerWidth < 700);
+  const [role, setRole] = useState<'user' | 'admin' | 'teacher'>();
+  const [roleLoading, setRoleLoading] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -60,12 +62,12 @@ const PublishPage: React.FC = () => {
       value: 'campus',
     },
     {
-      title: '教务通知',
-      value: 'academic',
-    },
-    {
       title: '导员通知',
       value: 'tutor',
+    },
+    {
+      title: '教务通知',
+      value: 'academic',
     },
   ];
 
@@ -99,6 +101,15 @@ const PublishPage: React.FC = () => {
       navigate('/home');
     });
   });
+
+  useLayoutEffect(() => {
+    setRoleLoading(true);
+    getUserIdentity().then((res: any) => {
+      console.log('res', res);
+      setRole(res.data.role);
+      setRoleLoading(false);
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-4 sm:py-8">
@@ -240,32 +251,55 @@ const PublishPage: React.FC = () => {
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
               通知类型
             </label>
-            <div className="grid grid-cols-3 gap-3">
-              {typeList.map((item) => (
-                <div
-                  key={item.value}
-                  className={`text-center py-2 px-4 rounded-lg cursor-pointer transition-all duration-300 ${
-                    formValue.type === item.value
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  onClick={() => {
-                    setFormValue((prev: any) => ({
-                      ...prev,
-                      type: item.value,
-                    }));
-                  }}
-                >
-                  {item.title}
-                </div>
-              ))}
-            </div>
+            {roleLoading && (
+              <div
+                style={{
+                  height: 40,
+                  width: '100%',
+                }}
+              ></div>
+            )}
+            {!roleLoading && (
+              <div className="grid grid-cols-3 gap-3">
+                {typeList.map((item) => {
+                  const isDisabled =
+                    (role === 'user' && item.value !== 'campus') ||
+                    (role === 'teacher' && item.value === 'academic');
+
+                  return (
+                    <div
+                      key={item.value}
+                      className={`text-center py-2 px-4 rounded-lg transition-all duration-300 ${
+                        isDisabled
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-60'
+                          : formValue.type === item.value
+                          ? 'bg-indigo-600 text-white cursor-pointer'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 cursor-pointer'
+                      }`}
+                      onClick={() => {
+                        if (!isDisabled) {
+                          setFormValue((prev: any) => ({
+                            ...prev,
+                            type: item.value,
+                          }));
+                        }
+                      }}
+                    >
+                      {item.title}
+                      {isDisabled && (
+                        <span className="text-xs ml-1">(无权限)</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* 活动标签 */}
           <div className="mb-4 sm:mb-6">
             <label className="block text-gray-700 text-sm sm:text-base font-medium mb-1.5 sm:mb-2">
-              活动（通知）标签
+              活动（通知）标签(多个标签之间用,分割)
             </label>
             <input
               type="text"

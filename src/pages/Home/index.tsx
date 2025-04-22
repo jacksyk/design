@@ -7,6 +7,7 @@ import {
   getAllTutor,
 } from '@/api';
 import { NavigationBar, TitleWrapperCard } from '@/components';
+import { joinUrlParams } from '@/utils';
 import {
   CommentOutlined,
   CustomerServiceOutlined,
@@ -29,6 +30,14 @@ const HomePage: React.FC = () => {
   );
 
   const [tutor, setTutor] = useState<getAllActivityResponse['data']>([]);
+
+  const handleClickToDetail = (id: number) => {
+    navigate(
+      joinUrlParams('/detail', {
+        id,
+      }),
+    );
+  };
 
   const tagList = useMemo(() => {
     return [
@@ -137,83 +146,113 @@ const HomePage: React.FC = () => {
             <div className="mb-4">
               <h3 className="text-base font-medium text-gray-900">教务通知</h3>
             </div>
-            <Carousel
-              autoplay
-              dots={{ className: '!-bottom-1' }}
-              draggable
-              className="[&_.slick-dots_li.slick-active_button]:!bg-blue-500 [&_.slick-dots_li_button]:!bg-gray-300"
-            >
-              {Array.from({ length: Math.ceil(eduNotices.length / 3) }).map(
-                (_, index) => (
-                  <div key={index} className="space-y-3 pb-8">
-                    {eduNotices
-                      .slice(index * 3, index * 3 + 3)
-                      .map((notice) => (
-                        <div
-                          key={notice.id}
-                          className="flex items-center justify-between py-2.5 hover:bg-gray-50 px-3 rounded-lg cursor-pointer"
-                          onClick={() => navigate(`/edu-notice/${notice.id}`)}
-                        >
-                          <span className="text-sm text-gray-700 truncate flex-1">
-                            {notice.title}
-                          </span>
-                          <span className="text-xs text-gray-500 ml-3">
-                            {notice.createTime}
-                          </span>
-                        </div>
-                      ))}
-                  </div>
-                ),
-              )}
-            </Carousel>
+            {eduNotices.length > 0 ? (
+              <Carousel
+                autoplay
+                dots={{ className: '!-bottom-1' }}
+                draggable
+                className="[&_.slick-dots_li.slick-active_button]:!bg-blue-500 [&_.slick-dots_li_button]:!bg-gray-300"
+              >
+                {Array.from({ length: Math.ceil(eduNotices.length / 3) }).map(
+                  (_, index) => (
+                    <div key={index} className="space-y-3 pb-8">
+                      {eduNotices
+                        .slice(index * 3, index * 3 + 3)
+                        .map((notice) => (
+                          <div
+                            key={notice.id}
+                            className="flex items-center justify-between py-2.5 hover:bg-gray-50 px-3 rounded-lg cursor-pointer"
+                            onClick={() => handleClickToDetail(notice.id)}
+                          >
+                            <span className="text-sm text-gray-700 truncate flex-1">
+                              {notice.title}
+                            </span>
+                            <span className="text-xs text-gray-500 ml-3">
+                              {notice.createTime}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  ),
+                )}
+              </Carousel>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-16 h-16 mb-4 text-gray-200">
+                  <svg
+                    className="w-full h-full"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h12v2H6zm0-3h12v2H6zm0 6h8v2H6z" />
+                  </svg>
+                </div>
+                <p className="text-gray-400 text-sm">暂无通知</p>
+              </div>
+            )}
             <div className="text-center mt-7">
               <span
                 className="inline-block px-6 py-2.5 text-sm text-blue-600 hover:text-blue-800 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full transition-colors font-medium"
-                onClick={() => navigate('/edu-notices')}
+                onClick={() => navigate('/list')}
               >
-                查看更多通知 →
+                查看更多相关通知 →
               </span>
             </div>
           </div>
 
-          {/* 导员通知卡片和校园动态卡片使用相同的样式 */}
+          {/* 导员通知 */}
           <div className="bg-white rounded-lg border border-gray-100 p-4">
             <div className="mb-3">
               <h3 className="text-base font-medium text-gray-900">导员通知</h3>
             </div>
-            <Carousel
-              autoplay
-              dots={{ className: '!-bottom-1' }}
-              draggable
-              className="[&_.slick-dots_li.slick-active_button]:!bg-blue-500 [&_.slick-dots_li_button]:!bg-gray-300"
-            >
-              {Array.from({ length: Math.ceil(tutor.length / 3) }).map(
-                (_, index) => (
-                  <div key={index} className="space-y-2 pb-6">
-                    {tutor.slice(index * 3, index * 3 + 3).map((notice) => (
-                      <div
-                        key={notice.id}
-                        className="flex items-center justify-between py-2 hover:bg-gray-50 px-2 rounded cursor-pointer"
-                        onClick={() => navigate(`/edu-notice/${notice.id}`)}
-                      >
-                        <span className="text-sm text-gray-700 truncate flex-1">
-                          {notice.title}
-                        </span>
-                        <span className="text-xs text-gray-500 ml-2">
-                          {notice.createTime}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ),
-              )}
-            </Carousel>
+            {tutor.length > 0 ? (
+              <Carousel
+                autoplay
+                dots={{ className: '!-bottom-1' }}
+                draggable
+                className="[&_.slick-dots_li.slick-active_button]:!bg-blue-500 [&_.slick-dots_li_button]:!bg-gray-300"
+              >
+                {Array.from({ length: Math.ceil(tutor.length / 3) }).map(
+                  (_, index) => (
+                    <div key={index} className="space-y-2 pb-6">
+                      {tutor.slice(index * 3, index * 3 + 3).map((notice) => (
+                        <div
+                          key={notice.id}
+                          className="flex items-center justify-between py-2 hover:bg-gray-50 px-2 rounded cursor-pointer"
+                          onClick={() => handleClickToDetail(notice.id)}
+                        >
+                          <span className="text-sm text-gray-700 truncate flex-1">
+                            {notice.title}
+                          </span>
+                          <span className="text-xs text-gray-500 ml-2">
+                            {notice.createTime}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ),
+                )}
+              </Carousel>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-16 h-16 mb-4 text-gray-200">
+                  <svg
+                    className="w-full h-full"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h12v2H6zm0-3h12v2H6zm0 6h8v2H6z" />
+                  </svg>
+                </div>
+                <p className="text-gray-400 text-sm">暂无通知</p>
+              </div>
+            )}
             <div className="text-center mt-6">
               <span
                 className="inline-block px-6 py-2.5 text-sm text-blue-600 hover:text-blue-800 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full transition-colors font-medium"
-                onClick={() => navigate('/edu-notices')}
+                onClick={() => navigate('/list')}
               >
-                查看更多通知 →
+                查看更多相关通知 →
               </span>
             </div>
           </div>
