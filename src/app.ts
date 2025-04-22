@@ -8,6 +8,7 @@ import type { RequestConfig } from 'umi';
 
 import { RequestOptions } from '@umijs/max';
 import { message } from 'antd';
+import { showLoginModal } from './components';
 // import VConsole from 'vconsole';
 
 // new VConsole();

@@ -6,7 +6,7 @@ import {
   getAllTags,
   getAllTutor,
 } from '@/api';
-import { NavigationBar, TitleWrapperCard } from '@/components';
+import { NavigationBar, showLoginModal, TitleWrapperCard } from '@/components';
 import { joinUrlParams } from '@/utils';
 import {
   CommentOutlined,
@@ -14,7 +14,7 @@ import {
   ToolOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from '@umijs/max';
-import { Carousel } from 'antd';
+import { Carousel, message } from 'antd';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { NoticeBar } from 'react-vant';
 import { ActivityCard, AiFloatCircle } from './components';
@@ -32,11 +32,26 @@ const HomePage: React.FC = () => {
   const [tutor, setTutor] = useState<getAllActivityResponse['data']>([]);
 
   const handleClickToDetail = (id: number) => {
+    if (!localStorage.getItem('userInfo')) {
+      message.warning('请先登录');
+      showLoginModal();
+      return;
+    }
+
     navigate(
       joinUrlParams('/detail', {
         id,
       }),
     );
+  };
+
+  const handleClickToList = () => {
+    if (!localStorage.getItem('userInfo')) {
+      message.warning('请先登录');
+      showLoginModal();
+      return;
+    }
+    navigate('/list');
   };
 
   const tagList = useMemo(() => {
@@ -86,7 +101,6 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <NavigationBar />
-
       <div className="max-w-7xl mx-auto px-2 sm:px-4 py-3 sm:py-6">
         {/* 公告栏 - 减小高度和间距 */}
         <div className="mb-4 sm:mb-6">
@@ -193,7 +207,7 @@ const HomePage: React.FC = () => {
             <div className="text-center mt-7">
               <span
                 className="inline-block px-6 py-2.5 text-sm text-blue-600 hover:text-blue-800 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full transition-colors font-medium"
-                onClick={() => navigate('/list')}
+                onClick={handleClickToList}
               >
                 查看更多相关通知 →
               </span>
@@ -250,7 +264,7 @@ const HomePage: React.FC = () => {
             <div className="text-center mt-6">
               <span
                 className="inline-block px-6 py-2.5 text-sm text-blue-600 hover:text-blue-800 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full transition-colors font-medium"
-                onClick={() => navigate('/list')}
+                onClick={handleClickToList}
               >
                 查看更多相关通知 →
               </span>
@@ -262,7 +276,7 @@ const HomePage: React.FC = () => {
             <TitleWrapperCard
               title="校园动态"
               isShowAllEntry
-              allEntryCb={() => navigate('/list')}
+              allEntryCb={handleClickToList}
               className="!bg-transparent !shadow-none !p-0"
             >
               <div className="grid grid-cols-1 gap-3">
