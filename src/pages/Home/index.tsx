@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
   const [tutor, setTutor] = useState<getAllActivityResponse['data']>([]);
 
   const handleClickToDetail = (id: number) => {
-    if (!localStorage.getItem('userInfo')) {
+    if (!localStorage.getItem('token')) {
       message.warning('请先登录');
       showLoginModal();
       return;
@@ -46,7 +46,7 @@ const HomePage: React.FC = () => {
   };
 
   const handleClickToList = () => {
-    if (!localStorage.getItem('userInfo')) {
+    if (!localStorage.getItem('token')) {
       message.warning('请先登录');
       showLoginModal();
       return;
@@ -55,7 +55,7 @@ const HomePage: React.FC = () => {
   };
 
   const tagList = useMemo(() => {
-    return [
+    const list = [
       {
         title: '网站反馈',
         icon: <CommentOutlined className="text-2xl" />,
@@ -78,6 +78,7 @@ const HomePage: React.FC = () => {
         },
       },
     ];
+    return list;
   }, [navigate]);
 
   useEffect(() => {

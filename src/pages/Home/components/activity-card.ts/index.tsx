@@ -1,6 +1,8 @@
 import { getAllActivityResponse } from '@/api';
+import { showLoginModal } from '@/components';
 import { joinUrlParams } from '@/utils';
 import { useNavigate } from '@umijs/max';
+import { message } from 'antd';
 import dayjs from 'dayjs';
 import { useCallback } from 'react';
 import { twMerge } from 'tailwind-merge';
@@ -26,6 +28,12 @@ export const ActivityCard: React.FC<ActivityCardType> = (props) => {
   const navigate = useNavigate();
 
   const handleClickToDetail = useCallback(() => {
+    if (!localStorage.getItem('token')) {
+      message.warning('请先登录');
+      showLoginModal();
+      return;
+    }
+
     navigate(
       joinUrlParams('/detail', {
         id,

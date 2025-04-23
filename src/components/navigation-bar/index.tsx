@@ -4,6 +4,7 @@ import { useNavigate } from '@umijs/max';
 import { useBoolean } from 'ahooks';
 import { Drawer } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
+import showLoginModal from '../login-popup';
 export const NavigationBar = () => {
   const navigate = useNavigate();
   const isPassAccess = localStorage.getItem('token');
@@ -16,9 +17,9 @@ export const NavigationBar = () => {
 
   useEffect(() => {
     if (isPassAccess) {
-      getNotifyFeedback().then((res) => {
-        setNotifyList(res.data);
-      });
+      // getNotifyFeedback().then((res) => {
+      //   setNotifyList(res.data);
+      // });
     }
   }, [isPassAccess]);
 
@@ -237,6 +238,15 @@ export const NavigationBar = () => {
                     key={item?.text}
                     onClick={() => {
                       if (item) {
+                        if (
+                          item.route === '/publish' ||
+                          item.route === '/notify'
+                        ) {
+                          if (!localStorage.getItem('token')) {
+                            showLoginModal();
+                            return;
+                          }
+                        }
                         navigate(item.route);
                         setOpenFalse();
                       }

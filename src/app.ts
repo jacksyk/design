@@ -7,8 +7,7 @@ import './global.css';
 import type { RequestConfig } from 'umi';
 
 import { RequestOptions } from '@umijs/max';
-import { message } from 'antd';
-import { showLoginModal } from './components';
+import { message, Modal } from 'antd';
 // import VConsole from 'vconsole';
 
 // new VConsole();
@@ -22,7 +21,19 @@ export const request: RequestConfig = {
     errorHandler(res: any) {
       if (res.response.status === 401) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+
+        Modal.confirm({
+          title: '需要登录',
+          content: '您需要登录后才能继续操作',
+          okText: '去登录',
+          cancelText: '回到首页',
+          onOk: () => {
+            window.location.href = '/login';
+          },
+          onCancel: () => {
+            window.location.href = '/';
+          },
+        });
       }
       message.error(res.response.statusText);
     },

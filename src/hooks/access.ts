@@ -6,7 +6,7 @@ export const useAccess = () => {
   const { pathname } = location;
 
   const doNotAccess = useMemo(() => {
-    return ['/login', '/home', '/'];
+    return ['/login', '/home', '/', '/chat', '/onlineToolbox', '/feedback'];
   }, []);
 
   useEffect(() => {

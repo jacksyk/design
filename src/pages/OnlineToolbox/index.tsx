@@ -1,9 +1,9 @@
 import { AllToolTypes, getAllTags, getAllTool } from '@/api';
-import { Back } from '@/components';
+import { Back, showLoginModal } from '@/components';
 import { BookOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from '@umijs/max';
 import { useMount } from 'ahooks';
-import { Button, Card, Empty, Input, Space, Tabs, Tag } from 'antd';
+import { Button, Card, Empty, Input, message, Space, Tabs, Tag } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 
 type TagType = {
@@ -69,7 +69,14 @@ const OnlineToolbox = () => {
             <Button
               type="primary"
               icon={<PlusOutlined />}
-              onClick={() => navigate('/uploadFile')}
+              onClick={() => {
+                if (!localStorage.getItem('token')) {
+                  message.warning('请先登录');
+                  showLoginModal();
+                  return;
+                }
+                navigate('/uploadFile');
+              }}
               className="bg-blue-600 hover:bg-blue-700"
             >
               分享资源
