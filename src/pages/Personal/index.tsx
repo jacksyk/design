@@ -50,6 +50,8 @@ const PersonalPage: React.FC = () => {
     collectionCount: 0,
     likesCount: 0,
     password: '',
+    likesDetail: [],
+    collectionDetail: [],
   });
 
   /** 是否展示编辑内容 */
@@ -57,6 +59,9 @@ const PersonalPage: React.FC = () => {
 
   /** 展示编辑头像的modal */
   const [isShowModal, setIsShowModal] = useState(false);
+
+  /** 下方我的收藏，我的活动等 */
+  const [activeTab, setActiveTab] = useState('我的活动');
 
   useMount(() => {
     getPersonalInfo().then((res) => {
@@ -255,12 +260,29 @@ const PersonalPage: React.FC = () => {
             ].map((item) => (
               <div
                 key={item.label}
-                className="bg-white p-4 sm:p-6 rounded-xl shadow-md text-center hover:shadow-lg transition-all duration-300"
+                onClick={() => setActiveTab(item.label)}
+                className={`bg-white p-4 sm:p-6 rounded-xl shadow-md text-center transition-all duration-300 cursor-pointer ${
+                  activeTab === item.label
+                    ? 'ring-2 ring-indigo-500 bg-indigo-50'
+                    : 'hover:shadow-lg hover:bg-gray-50'
+                }`}
               >
-                <div className="text-xl sm:text-2xl font-bold text-indigo-600 mb-1 sm:mb-2">
+                <div
+                  className={`text-xl sm:text-2xl font-bold mb-1 sm:mb-2 ${
+                    activeTab === item.label
+                      ? 'text-indigo-600'
+                      : 'text-gray-700'
+                  }`}
+                >
                   {item.count}
                 </div>
-                <div className="text-gray-600 text-sm sm:text-base">
+                <div
+                  className={`text-sm sm:text-base ${
+                    activeTab === item.label
+                      ? 'text-indigo-600'
+                      : 'text-gray-600'
+                  }`}
+                >
                   {item.label}
                 </div>
               </div>
@@ -272,41 +294,208 @@ const PersonalPage: React.FC = () => {
         {!isShowEdit && (
           <div className="bg-white rounded-xl shadow-md p-4 sm:p-8 mb-4 sm:mb-8 animate__animated animate__bounceInLeft">
             <h3 className="text-lg sm:text-xl font-bold text-indigo-800 mb-4 sm:mb-6">
-              我的活动
+              {activeTab}
             </h3>
             <div className="space-y-4 sm:space-y-6">
-              {userInfo.activities.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-100 pb-4"
-                >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-indigo-50 flexCenter">
-                      <span className="text-indigo-600 text-sm">活动</span>
+              {activeTab === '我的活动' &&
+                userInfo.activities.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-100 pb-4"
+                  >
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-indigo-50 flex items-center justify-center">
+                        <span className="text-indigo-600 text-sm">活动</span>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800 text-sm sm:text-base">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {dayjs(item.created_at).format('YYYY-MM-DD')}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-gray-800 text-sm sm:text-base">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-gray-500">
-                        {dayjs(item.created_at).format('YYYY-MM-DD')}
-                      </p>
+                    <span
+                      className="text-indigo-500 cursor-pointer hover:text-indigo-600 text-sm sm:text-base self-end sm:self-auto"
+                      onClick={() => {
+                        navigate(
+                          joinUrlParams('/detail', {
+                            id: item.id,
+                          }),
+                        );
+                      }}
+                    >
+                      查看详情
+                    </span>
+                  </div>
+                ))}
+
+              {/* 添加我的点赞列表 */}
+              {activeTab === '我的点赞' &&
+                userInfo.likesDetail.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-100 pb-4"
+                  >
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-pink-50 flex items-center justify-center">
+                        <svg
+                          className="w-6 h-6 text-pink-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800 text-sm sm:text-base">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {dayjs(item.created_at).format('YYYY-MM-DD')}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className="text-pink-500 cursor-pointer hover:text-pink-600 text-sm sm:text-base self-end sm:self-auto"
+                      onClick={() => {
+                        navigate(
+                          joinUrlParams('/detail', {
+                            id: item.id,
+                          }),
+                        );
+                      }}
+                    >
+                      查看详情
+                    </span>
+                  </div>
+                ))}
+
+              {/* 添加我的收藏列表 */}
+              {activeTab === '我的收藏' &&
+                userInfo.collectionDetail.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-100 pb-4"
+                  >
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-yellow-50 flex items-center justify-center">
+                        <svg
+                          className="w-6 h-6 text-yellow-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800 text-sm sm:text-base">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {dayjs(item.created_at).format('YYYY-MM-DD')}
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      className="text-yellow-500 cursor-pointer hover:text-yellow-600 text-sm sm:text-base self-end sm:self-auto"
+                      onClick={() => {
+                        navigate(
+                          joinUrlParams('/detail', {
+                            id: item.id,
+                          }),
+                        );
+                      }}
+                    >
+                      查看详情
+                    </span>
+                  </div>
+                ))}
+
+              {/* 添加我的反馈列表 */}
+              {activeTab === '我的反馈' &&
+                userInfo.feedback.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-100 pb-4"
+                  >
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-50 flex items-center justify-center">
+                        <svg
+                          className="w-6 h-6 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-800 text-sm sm:text-base">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs sm:text-sm text-gray-500">
+                          {dayjs(item.createdAt).format('YYYY-MM-DD')}
+                        </p>
+                        <p className="text-gray-600 text-xs sm:text-sm mt-1">
+                          {item.content}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs ${
+                          item.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : item.status === 'processing'
+                            ? 'bg-blue-100 text-blue-800'
+                            : item.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {item.status === 'pending'
+                          ? '待处理'
+                          : item.status === 'processing'
+                          ? '处理中'
+                          : item.status === 'completed'
+                          ? '已完成'
+                          : '已拒绝'}
+                      </span>
+                      {item.reply && (
+                        <p className="text-xs text-gray-500 max-w-xs text-right">
+                          回复：{item.reply}
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <span
-                    className="text-indigo-500 cursor-pointer hover:text-indigo-600 text-sm sm:text-base self-end sm:self-auto"
-                    onClick={() => {
-                      navigate(
-                        joinUrlParams('/detail', {
-                          id: item.id,
-                        }),
-                      );
-                    }}
-                  >
-                    查看详情
-                  </span>
+                ))}
+
+              {/* 如果没有数据显示空状态 */}
+              {((activeTab === '我的活动' &&
+                userInfo.activities.length === 0) ||
+                (activeTab === '我的反馈' && userInfo.feedback.length === 0) ||
+                (activeTab === '我的收藏' &&
+                  userInfo.collectionDetail.length === 0) ||
+                (activeTab === '我的点赞' &&
+                  userInfo.likesDetail.length === 0)) && (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 mb-2">暂无数据</div>
+                  <div className="text-sm text-gray-500">
+                    快去探索更多内容吧
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}

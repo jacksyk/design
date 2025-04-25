@@ -1,5 +1,20 @@
 import { request } from '@umijs/max';
 
+type ActivityType = Array<{
+  id: number;
+  title: string;
+  description: string;
+  start_time: string;
+  end_time: string;
+  created_at: string;
+  updated_at: string;
+  user_id: number;
+  likes: number;
+  views: number;
+  collections: number;
+  tags: string;
+}>;
+
 export type UserInfoReponse = {
   data: {
     username: string;
@@ -10,20 +25,7 @@ export type UserInfoReponse = {
     introduction: string;
     student_id: number;
     password: string;
-    activities: Array<{
-      id: number;
-      title: string;
-      description: string;
-      start_time: string;
-      end_time: string;
-      created_at: string;
-      updated_at: string;
-      user_id: number;
-      likes: number;
-      views: number;
-      collections: number;
-      tags: string;
-    }>;
+    activities: ActivityType;
     feedback: Array<{
       id: number;
       userId: number;
@@ -36,6 +38,8 @@ export type UserInfoReponse = {
     }>;
     collectionCount: number;
     likesCount: number;
+    likesDetail: ActivityType;
+    collectionDetail: ActivityType;
   };
 };
 
@@ -44,7 +48,6 @@ export const getPersonalInfo = () => {
     request('/user')
       .then((res) => {
         const data = res.data;
-        // console.log('res', res);
         resolve({
           data,
         });
