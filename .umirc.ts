@@ -13,7 +13,7 @@ export default defineConfig({
   npmClient: 'pnpm',
   plugins: [path.resolve(__dirname, './plugin/auto-generate-plugin.js')],
   tailwindcss: {},
-  devtool: 'source-map',
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
   clickToComponent: {
     editor: 'cursor',
   },

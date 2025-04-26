@@ -8,9 +8,11 @@ import type { RequestConfig } from 'umi';
 
 import { RequestOptions } from '@umijs/max';
 import { message, Modal } from 'antd';
+import { startPerformanceMonitoring } from './performance';
 // import VConsole from 'vconsole';
 
 // new VConsole();
+startPerformanceMonitoring();
 
 export async function getInitialState(): Promise<{ name: string }> {
   return { name: '@umijs/max' };
