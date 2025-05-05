@@ -101,15 +101,35 @@ export const collectPerformanceMetrics = (): Promise<PerformanceMetrics> => {
       return;
     }
 
+    let fcp = false;
     let lcp = false;
     let cls = false;
 
     // 检查是否所有指标都已收集
     const checkAllMetricsCollected = () => {
-      if (lcp && cls) {
+      if (fcp && lcp && cls) {
         resolve(metrics);
       }
     };
+
+    // 监听 FCP
+    try {
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        const fcpEntry = entries.find(
+          (entry) => entry.name === 'first-contentful-paint',
+        );
+        if (fcpEntry) {
+          metrics.firstContentfulPaint = fcpEntry.startTime;
+        }
+        fcp = true;
+        checkAllMetricsCollected();
+      }).observe({ type: 'paint', buffered: true });
+    } catch (e) {
+      console.warn('FCP 监测不可用', e);
+      fcp = true;
+      checkAllMetricsCollected();
+    }
 
     // 监听 LCP
     try {

@@ -1,5 +1,5 @@
 import { request } from '@@/plugin-request';
-import { reject } from 'lodash-es';
+
 type LoginType = {
   student_id: string;
   password: string;
@@ -11,7 +11,7 @@ type ResponseType = {
 };
 
 export const login = (data: LoginType) => {
-  return new Promise<ResponseType>((resolve) => {
+  return new Promise<ResponseType>((resolve, reject) => {
     request('/login', {
       method: 'post',
       data,

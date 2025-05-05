@@ -37,7 +37,10 @@ export const request: RequestConfig = {
           },
         });
       }
-      message.error(res.response.statusText);
+
+      message.error(
+        res.response.data.message ?? res.response.data.data.message,
+      );
     },
     errorThrower() {},
   },
